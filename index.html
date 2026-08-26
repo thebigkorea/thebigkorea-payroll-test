@@ -3,7 +3,7 @@
 <html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>더큰코리아 급여관리 시스템</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f5f1eb;color:#25180f;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}button,input,select,textarea{font:inherit}.head{background:linear-gradient(135deg,#3d2414,#74472b);color:#fff;padding:25px 18px}.head>div,.wrap{width:min(1400px,calc(100% - 28px));margin:auto}.head h1{margin:0;font-size:27px}.head p{margin:8px 0 0;opacity:.85}.wrap{padding:20px 0 40px}.card{background:#fff;border:1px solid #e2d6ca;border-radius:17px;padding:17px;margin-bottom:15px;box-shadow:0 6px 19px rgba(67,42,24,.07)}.login{max-width:500px;margin:40px auto;padding:27px}.login h2{margin-top:0}label{display:block;font-size:13px;font-weight:800;color:#59483b}input,select,textarea{width:100%;margin-top:6px;padding:10px 11px;border:1px solid #d7ccc1;border-radius:10px;background:#fff}.btn{border:0;border-radius:10px;padding:10px 14px;background:#4b2d1a;color:#fff;font-weight:800;cursor:pointer}.btn.blue{background:#2563eb}.btn.green{background:#15803d}.btn.gray{background:#70655d}.btn.small{padding:7px 10px;font-size:12px}.login .btn{width:100%;margin-top:14px;transition:transform .08s ease,box-shadow .08s ease,opacity .08s ease}.login .btn:active,.login .btn.login-press{transform:translateY(2px) scale(.995);box-shadow:inset 0 2px 5px rgba(0,0,0,.18);opacity:.9}.login .btn:disabled{cursor:wait;opacity:.75}.toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.toolbar label{min-width:180px;flex:1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}.stat{background:#fff;border:1px solid #e2d6ca;border-radius:14px;padding:15px}.stat span{display:block;color:#817267;font-size:12px}.stat strong{font-size:23px}.table-wrap{overflow:auto;border:1px solid #e2d6ca;border-radius:13px}table{width:100%;min-width:1050px;border-collapse:collapse}th,td{padding:11px 9px;border-bottom:1px solid #eee7df;text-align:center;font-size:13px;white-space:nowrap}th{background:#eee4da;position:sticky;top:0}.left{text-align:left}.badge{padding:4px 8px;border-radius:99px;font-weight:800}.wait{background:#fef3c7;color:#92400e}.saved{background:#dbeafe;color:#1e40af}.confirmed{background:#dcfce7;color:#166534}.modal{display:none;position:fixed;inset:0;background:rgba(20,12,8,.58);z-index:20;overflow:auto;padding:15px}.modal.open{display:block}.box{width:min(980px,100%);margin:20px auto;background:#fff;border-radius:18px;overflow:hidden}.mhead{display:flex;justify-content:space-between;align-items:center;padding:16px 19px;background:#f1e9e1}.mhead h2{margin:0}.close{border:0;background:none;font-size:28px}.summary{padding:13px 19px;background:#fffaf5;border-bottom:1px solid #e2d6ca}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:18px}.section{grid-column:1/-1;color:#4b2d1a;font-weight:900;border-bottom:1px solid #e2d6ca;padding:5px 0}.full{grid-column:1/-1}.totals{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.total{border-radius:12px;padding:13px;background:#f5f1eb}.total strong{display:block;font-size:21px;margin-top:4px}.actions{display:flex;justify-content:flex-end;gap:8px;padding:15px 18px;background:#faf8f6;border-top:1px solid #e2d6ca}.notice{display:none;margin-top:10px;padding:11px;border-radius:10px}.notice.show{display:block}.ok{background:#dcfce7;color:#166534}.err{background:#fee2e2;color:#991b1b}.hidden{display:none!important}
+*{box-sizing:border-box}body{margin:0;background:#f5f1eb;color:#25180f;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}button,input,select,textarea{font:inherit}.head{background:linear-gradient(135deg,#3d2414,#74472b);color:#fff;padding:25px 18px}.head>div,.wrap{width:min(1400px,calc(100% - 28px));margin:auto}.head h1{margin:0;font-size:27px}.head p{margin:8px 0 0;opacity:.85}.wrap{padding:20px 0 40px}.card{background:#fff;border:1px solid #e2d6ca;border-radius:17px;padding:17px;margin-bottom:15px;box-shadow:0 6px 19px rgba(67,42,24,.07)}.login{max-width:500px;margin:40px auto;padding:27px}.login h2{margin-top:0}label{display:block;font-size:13px;font-weight:800;color:#59483b}input,select,textarea{width:100%;margin-top:6px;padding:10px 11px;border:1px solid #d7ccc1;border-radius:10px;background:#fff}.btn{border:0;border-radius:10px;padding:10px 14px;background:#4b2d1a;color:#fff;font-weight:800;cursor:pointer}.btn.blue{background:#2563eb}.btn.green{background:#15803d}.btn.gray{background:#70655d}.btn.small{padding:7px 10px;font-size:12px}.login .btn{width:100%;margin-top:14px;transition:transform .08s ease,box-shadow .08s ease,opacity .08s ease}.login .btn:active,.login .btn.login-press{transform:translateY(2px) scale(.995);box-shadow:inset 0 2px 5px rgba(0,0,0,.18);opacity:.9}.login .btn:disabled{cursor:wait;opacity:.75}.toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.toolbar label{min-width:180px;flex:1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}.stat{background:#fff;border:1px solid #e2d6ca;border-radius:14px;padding:15px}.stat span{display:block;color:#817267;font-size:12px}.stat strong{font-size:23px}.table-wrap{overflow:auto;border:1px solid #e2d6ca;border-radius:13px}table{width:100%;min-width:1050px;border-collapse:collapse}th,td{padding:11px 9px;border-bottom:1px solid #eee7df;text-align:center;font-size:13px;white-space:nowrap}th{background:#eee4da;position:sticky;top:0}.left{text-align:left}.badge{padding:4px 8px;border-radius:99px;font-weight:800}.wait{background:#fef3c7;color:#92400e}.saved{background:#dbeafe;color:#1e40af}.confirmed{background:#dcfce7;color:#166534}.modal{display:none;position:fixed;inset:0;background:rgba(20,12,8,.58);z-index:20;overflow:auto;padding:15px}.modal.open{display:block}.box{width:min(980px,100%);margin:20px auto;background:#fff;border-radius:18px;overflow:hidden}.mhead{display:flex;justify-content:space-between;align-items:center;padding:16px 19px;background:#f1e9e1}.mhead h2{margin:0}.close{border:0;background:none;font-size:28px}.summary{padding:13px 19px;background:#fffaf5;border-bottom:1px solid #e2d6ca}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:18px}.section{grid-column:1/-1;color:#4b2d1a;font-weight:900;border-bottom:1px solid #e2d6ca;padding:5px 0}.full{grid-column:1/-1}.totals{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.total{border-radius:12px;padding:13px;background:#f5f1eb}.total strong{display:block;font-size:21px;margin-top:4px}.actions{display:flex;justify-content:flex-end;gap:8px;padding:15px 18px;background:#faf8f6;border-top:1px solid #e2d6ca}.notice{display:none;margin-top:10px;padding:11px;border-radius:10px}.notice.show{display:block}.ok{background:#dcfce7;color:#166534}.err{background:#fee2e2;color:#991b1b}.hidden{display:none!important}.linked-pay{background:#ecfdf5;color:#047857}.linked-input{background:#f0fdf4!important;border-color:#86efac!important;font-weight:900}
 .action-loading-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,12,8,.16);align-items:center;justify-content:center;pointer-events:none}
 .action-loading-overlay.show{display:flex}
 .action-loading-box{display:flex;align-items:center;gap:10px;background:#fff;padding:13px 18px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.18);font-weight:900;color:#4b2d1a}
@@ -76,7 +76,7 @@
 
 <div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="box"><div class="mhead"><h2>직원 급여 계산</h2><button class="close" onclick="closeModal()">×</button></div><div class="summary"><strong id="empName"></strong><div id="empInfo"></div></div>
 <div class="grid"><input id="employeeId" type="hidden"><input id="updatedBy" type="hidden" value="급여담당자"><div class="section">급여 기본설정</div><label>근로구분<select id="workerType"><option value="">선택하세요</option><option value="정직원">정직원</option><option value="아르바이트">아르바이트</option><option value="일용직">일용직</option><option value="외국인">외국인</option></select></label><label>급여형태<select id="payType"><option>월급제</option><option>시급제</option><option>일급제</option></select></label><label>소득구분<select id="incomeType"><option>근로소득</option><option>사업소득</option><option>일용근로소득</option></select></label><label>직무<select id="jobType"><option value="">선택하세요</option><option value="홀서빙">홀서빙</option><option value="주방조리">주방조리</option><option value="홀퇴식">홀퇴식</option><option value="설거지">설거지</option><option value="총괄">총괄</option></select></label><div class="help">급여형태와 소득구분을 먼저 선택하세요. 월급제 근로소득은 4대보험이 자동 적용되며, 사업소득은 4대보험이 자동 해제됩니다.</div><div class="section">지급항목</div>
-<label>기본급<input class="calc earn" id="basePay" type="text" inputmode="numeric"></label><label>연장수당<input class="calc earn" id="overtimePay" type="text" inputmode="numeric"></label><label>직무수당<input class="calc earn" id="jobAllowance" type="text" inputmode="numeric"></label><label>직책수당<input class="calc earn" id="positionAllowance" type="text" inputmode="numeric"></label><label>추가근무수당<input class="calc earn" id="extraWorkPay" type="text" inputmode="numeric" readonly></label><input id="compLeavePay" type="hidden" value="0"><label>식대<input class="calc earn" id="mealAllowance" type="text" inputmode="numeric"></label><label>차량유지비<input class="calc earn" id="vehicleAllowance" type="text" inputmode="numeric"></label><label>기타지급<input class="calc earn" id="otherPay" type="text" inputmode="numeric"></label>
+<label>기본급<input class="calc earn" id="basePay" type="text" inputmode="numeric"></label><div id="koreaHouseLinkNotice" class="help hidden">한국의집 아르바이트 관리 근로내역의 선택월 누적급여가 기본급으로 자동 연동됩니다. 월이 끝난 뒤에만 최종 확정할 수 있습니다.</div><label>연장수당<input class="calc earn" id="overtimePay" type="text" inputmode="numeric"></label><label>직무수당<input class="calc earn" id="jobAllowance" type="text" inputmode="numeric"></label><label>직책수당<input class="calc earn" id="positionAllowance" type="text" inputmode="numeric"></label><label>추가근무수당<input class="calc earn" id="extraWorkPay" type="text" inputmode="numeric" readonly></label><input id="compLeavePay" type="hidden" value="0"><label>식대<input class="calc earn" id="mealAllowance" type="text" inputmode="numeric"></label><label>차량유지비<input class="calc earn" id="vehicleAllowance" type="text" inputmode="numeric"></label><label>기타지급<input class="calc earn" id="otherPay" type="text" inputmode="numeric"></label>
 <div class="section">추가근무수당 계산</div><label>미휴무 1일 기준액<input class="money-setting work-calc" id="compLeaveDailyRate" type="text" inputmode="numeric"></label><label>미휴무 일수<input class="work-calc" id="compLeaveDays" type="number" min="0" step="0.5" value="0"></label><label>미휴무 계산액<input id="calculatedCompLeavePay" type="text" readonly></label><label>연장근로 1시간 기준액<input class="money-setting work-calc" id="overtimeHourlyRate" type="text" inputmode="numeric"></label><label>연장근로시간<input class="work-calc" id="overtimeHours" type="number" min="0" step="0.5" value="0"></label><label>연장근로 계산액<input id="calculatedOvertimePay" type="text" readonly></label><div class="help">미휴무 일수 × 미휴무 1일 기준액 + 연장근로시간 × 연장근로 1시간 기준액을 추가근무수당으로 자동 합산합니다. 기준액은 급여기준 저장, 일수와 시간은 월 급여 저장에 보관됩니다.</div>
 <div class="section">공제항목</div><label>국민연금<input class="calc deduct" id="pension" type="text" inputmode="numeric"></label><label>건강보험<input class="calc deduct" id="health" type="text" inputmode="numeric"></label><label>장기요양보험<input class="calc deduct" id="longTermCare" type="text" inputmode="numeric"></label><label>고용보험<input class="calc deduct" id="employmentInsurance" type="text" inputmode="numeric"></label><label>소득세<input class="calc deduct" id="incomeTax" type="text" inputmode="numeric"></label><label>지방소득세<input class="calc deduct" id="localIncomeTax" type="text" inputmode="numeric"></label><label>기타공제<input class="calc deduct" id="otherDeduction" type="text" inputmode="numeric"></label>
 <div class="section">보험·세금 자동계산 설정</div>
@@ -182,7 +182,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
-const API_URL="https://script.google.com/macros/s/AKfycbx8whuAGHuhAg3fhffsZSIJQI7m2RDXN4s9Mm44cF27KjSIFYMelqgYpVMbeQuTBv8/exec";let pin="",employees=[],payrolls=[],previousPayrolls=[],payStandards=[],previousMonth="",payrollSetting=null,employmentStatusRows=[],storeOptions=[],currentPayrollLocked=false;const earnIds=["basePay","overtimePay","jobAllowance","positionAllowance","extraWorkPay","mealAllowance","vehicleAllowance","otherPay"],deductIds=["pension","health","longTermCare","employmentInsurance","incomeTax","localIncomeTax","otherDeduction"];
+const API_URL="https://script.google.com/macros/s/AKfycbx8whuAGHuhAg3fhffsZSIJQI7m2RDXN4s9Mm44cF27KjSIFYMelqgYpVMbeQuTBv8/exec";let pin="",employees=[],payrolls=[],previousPayrolls=[],payStandards=[],previousMonth="",payrollSetting=null,employmentStatusRows=[],storeOptions=[],currentPayrollLocked=false,koreaHouseLinkedPayroll={},canConfirmMonth=false,currentPayrollMonth="";const earnIds=["basePay","overtimePay","jobAllowance","positionAllowance","extraWorkPay","mealAllowance","vehicleAllowance","otherPay"],deductIds=["pension","health","longTermCare","employmentInsurance","incomeTax","localIncomeTax","otherDeduction"];
 const $=id=>document.getElementById(id),won=v=>Number(v||0).toLocaleString("ko-KR")+"원",num = id => {
   const value = String($(id).value || "")
     .replace(/[^\d]/g, "");
@@ -275,6 +275,9 @@ async function load(resetToKoreaHouse=false){
     previousPayrolls=Array.isArray(r.previousPayrolls)?r.previousPayrolls:[];
     payStandards=Array.isArray(r.payStandards)?r.payStandards:[];
     previousMonth=String(r.previousMonth||"");
+    koreaHouseLinkedPayroll=(r.koreaHouseLinkedPayroll&&typeof r.koreaHouseLinkedPayroll==="object")?r.koreaHouseLinkedPayroll:{};
+    canConfirmMonth=Boolean(r.canConfirmMonth);
+    currentPayrollMonth=String(r.currentPayrollMonth||"");
     storeOptions=Array.isArray(r.stores)?r.stores:Object.values(employees.reduce((map,e)=>{if(e.storeId&&!map[e.storeId])map[e.storeId]={storeId:e.storeId,storeName:e.storeName||e.storeId};return map},{})).sort((a,b)=>a.storeName.localeCompare(b.storeName,"ko"));
     $("store").innerHTML='<option value="">전체 점포</option>'+storeOptions.map(s=>`<option value="${s.storeId}">${s.storeName}</option>`).join("");
 
@@ -288,6 +291,33 @@ async function load(resetToKoreaHouse=false){
     render();
   }catch(e){msg($("app").classList.contains("hidden")?"loginMsg":"mainMsg","err",e.message);throw e}
 }
+
+function linkedPayrollFor(employeeId){
+  return koreaHouseLinkedPayroll[String(employeeId)]||null;
+}
+function isRegularEmployee(e,p){
+  return normalizeWorkerType((p&&p.employmentType)||e.employmentType||"")==="정직원";
+}
+function applyKoreaHouseLinkedBasePay(e,current,locked){
+  const link=linkedPayrollFor(e.employeeId);
+  const input=$("basePay");
+  const notice=$("koreaHouseLinkNotice");
+
+  input.readOnly=false;
+  input.classList.remove("linked-input");
+  notice.classList.add("hidden");
+
+  if(!link||locked||isRegularEmployee(e,current)){
+    return false;
+  }
+
+  input.value=Number(link.amount||0).toLocaleString("ko-KR");
+  input.readOnly=true;
+  input.classList.add("linked-input");
+  notice.classList.remove("hidden");
+  return true;
+}
+
 function render(){
   const s=$("store").value,k=$("keyword").value.toLowerCase();
   const map=Object.fromEntries(payrolls.map(p=>[p.employeeId,p]));
@@ -311,7 +341,22 @@ function render(){
 
       return String(a.name||"").localeCompare(String(b.name||""),"ko");
     });
-$("body").innerHTML=list.length?list.map(e=>{const p=map[e.employeeId],st=p?.status||"미작성",cls=st==="확정"?"confirmed":p?"saved":"wait",buttonText=!p?"작성":st==="확정"?"명세서 보기":"조회·수정";return `<tr><td class="left">${e.storeName}</td><td><strong>${e.name}</strong></td><td>${normalizeWorkerType(p?.employmentType||e.employmentType)||"-"}</td><td>${p?.jobType||e.position||e.department||"-"}</td><td>${p?.payType||e.payType||"-"}</td><td>${p?won(p.grossPay):"-"}</td><td>${p?won(p.totalDeduction):"-"}</td><td>${p?won(p.netPay):"-"}</td><td><span class="badge ${cls}">${st}</span></td><td><div class="manage-buttons"><button class="btn small" onclick="openPay('${e.employeeId}')">${buttonText}</button><button class="btn small green" onclick="openEmploymentStatusFor('${e.employeeId}')">인사상태</button><button class="btn small gray" onclick="openRetirementFor('${e.employeeId}')">퇴직급여</button></div></td></tr>`}).join(""):'<tr><td colspan="10">직원이 없습니다.</td></tr>';const saved=payrolls.length,confirmed=payrolls.filter(p=>p.status==="확정").length;$("cnt").textContent=employees.length+"명";$("savedCnt").textContent=saved+"명";$("confirmedCnt").textContent=confirmed+"명";$("netSum").textContent=won(payrolls.reduce((a,p)=>a+p.netPay,0))}
+$("body").innerHTML=list.length?list.map(e=>{
+  const p=map[e.employeeId];
+  const link=linkedPayrollFor(e.employeeId);
+  const locked=p?.status==="확정";
+  const linkedActive=Boolean(link&&!locked&&!isRegularEmployee(e,p));
+  const st=locked?"확정":linkedActive?"연동중":p?"작성중":"미작성";
+  const cls=locked?"confirmed":linkedActive?"linked-pay":p?"saved":"wait";
+  const buttonText=!p&&!linkedActive?"작성":locked?"명세서 보기":"조회·수정";
+  const linkedGross=linkedActive
+    ? Number(link.amount||0)+Number(p?.grossPay||0)-Number(p?.basePay||0)
+    : Number(p?.grossPay||0);
+  const shownGross=(p||linkedActive)?won(linkedGross):"-";
+  const shownDeduct=p?won(p.totalDeduction):"-";
+  const shownNet=p?won(linkedGross-Number(p.totalDeduction||0)):"-";
+  return `<tr><td class="left">${e.storeName}</td><td><strong>${e.name}</strong></td><td>${normalizeWorkerType(p?.employmentType||e.employmentType)||"-"}</td><td>${p?.jobType||e.position||e.department||"-"}</td><td>${p?.payType||e.payType||"-"}</td><td>${shownGross}</td><td>${shownDeduct}</td><td>${shownNet}</td><td><span class="badge ${cls}">${st}</span></td><td><div class="manage-buttons"><button class="btn small" onclick="openPay('${e.employeeId}')">${buttonText}</button><button class="btn small green" onclick="openEmploymentStatusFor('${e.employeeId}')">인사상태</button><button class="btn small gray" onclick="openRetirementFor('${e.employeeId}')">퇴직급여</button></div></td></tr>`
+}).join(""):'<tr><td colspan="10">직원이 없습니다.</td></tr>';const saved=payrolls.length,confirmed=payrolls.filter(p=>p.status==="확정").length;$("cnt").textContent=employees.length+"명";$("savedCnt").textContent=saved+"명";$("confirmedCnt").textContent=confirmed+"명";$("netSum").textContent=won(payrolls.reduce((a,p)=>a+p.netPay,0))}
 async function openPay(id){
   clear("modalMsg");
   const e=employees.find(x=>x.employeeId===id),
@@ -327,6 +372,7 @@ async function openPay(id){
   $("empInfo").textContent=[e.storeName,e.position,e.employmentType,locked?"확정완료":""].filter(Boolean).join(" · ");
 
   [...earnIds,...deductIds].forEach(x=>$(x).value=Number(p[x]||0).toLocaleString("ko-KR"));
+  const koreaHouseLinkedActive=applyKoreaHouseLinkedBasePay(e,current,locked);
   $("compLeavePay").value="0";
   $("compLeaveDailyRate").value=Number(p.compLeaveDailyRate||standard?.compLeaveDailyRate||0).toLocaleString("ko-KR");
   $("overtimeHourlyRate").value=Number(p.overtimeHourlyRate||standard?.overtimeHourlyRate||0).toLocaleString("ko-KR");
@@ -369,6 +415,7 @@ async function openPay(id){
     $("jobType").disabled=false;
     $("classificationBtn").classList.remove("hidden");
 
+    $("confirmBtn").disabled=false;
     ["saveBtn","confirmBtn","standardBtn","previousBtn","settingBtn","autoCalcBtn"].forEach(
       buttonId=>$(buttonId).classList.add("hidden")
     );
@@ -384,6 +431,9 @@ async function openPay(id){
       buttonId=>$(buttonId).classList.remove("hidden")
     );
     updateInsuranceSelectionPolicy(false);
+    applyKoreaHouseLinkedBasePay(e,current,false);
+    $("confirmBtn").disabled=!canConfirmMonth;
+    $("confirmBtn").title=canConfirmMonth?"":"현재 급여월은 종료된 뒤 다음 달 1일부터 최종 확정할 수 있습니다.";
 
     if(!current&&standard){
       msg("modalMsg","ok","등록된 급여기준을 자동으로 불러왔습니다.");
@@ -437,7 +487,7 @@ async function saveInsuranceSetting(){if(!$("updatedBy").value.trim())return msg
 async function autoCalculateDeductions(){const b=$("autoCalcBtn");setButtonBusy(b,true,"계산 중...");try{const r=await post({action:"calculatePayrollDeductions",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),setting:payrollSettingData()});const c=r.calculation||{};["pension","health","longTermCare","employmentInsurance","incomeTax","localIncomeTax"].forEach(id=>$(id).value=Number(c[id]||0).toLocaleString("ko-KR"));calc();const detail="과세급여 "+won(c.taxablePay)+" · 비과세급여 "+won(c.nonTaxPay);const warning=(c.warnings||[]).length?" / "+c.warnings.join(" "):"";msg("modalMsg","ok","공제를 자동 계산했습니다. "+detail+warning)}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
 function standardData(){return{payType:$("payType").value,incomeType:$("incomeType").value,jobType:$("jobType").value,basePay:num("basePay"),overtimePay:num("overtimePay"),jobAllowance:num("jobAllowance"),positionAllowance:num("positionAllowance"),mealAllowance:num("mealAllowance"),vehicleAllowance:num("vehicleAllowance"),otherPay:num("otherPay"),compLeaveDailyRate:num("compLeaveDailyRate"),overtimeHourlyRate:num("overtimeHourlyRate")}}
 async function saveStandard(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");const b=$("standardBtn");setButtonBusy(b,true,"저장 중...");try{const r=await post({action:"savePayStandard",employeeId:$("employeeId").value,standard:standardData(),updatedBy:$("updatedBy").value});const index=payStandards.findIndex(x=>x.employeeId===r.standard.employeeId);if(index>=0)payStandards[index]=r.standard;else payStandards.push(r.standard);msg("modalMsg","ok",r.message+" 추가근무수당·미휴무수당과 공제항목은 월별 변동항목이므로 기준에 저장하지 않습니다.")}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
-function loadPreviousPayroll(){const employeeId=$("employeeId").value,previous=previousPayrolls.find(x=>x.employeeId===employeeId);if(!previous)return msg("modalMsg","err",(previousMonth||"전월")+"에 저장된 급여자료가 없습니다.");[...earnIds,...deductIds].forEach(id=>$(id).value=Number(previous[id]||0).toLocaleString("ko-KR"));$("compLeaveDailyRate").value=Number(previous.compLeaveDailyRate||0).toLocaleString("ko-KR");$("overtimeHourlyRate").value=Number(previous.overtimeHourlyRate||0).toLocaleString("ko-KR");$("compLeaveDays").value=Number(previous.compLeaveDays||0);$("overtimeHours").value=Number(previous.overtimeHours||0);calculateWorkAllowance(Boolean(previous.extraWorkPay&&!previous.compLeaveDailyRate&&!previous.overtimeHourlyRate));$("payType").value=previous.payType||"월급제";$("incomeType").value=previous.incomeType||"근로소득";$("jobType").value=previous.jobType||"";calc();msg("modalMsg","ok",(previousMonth||"전월")+" 급여를 불러왔습니다. 변동항목을 확인한 뒤 저장하세요.")}
+function loadPreviousPayroll(){const employeeId=$("employeeId").value,previous=previousPayrolls.find(x=>x.employeeId===employeeId);if(!previous)return msg("modalMsg","err",(previousMonth||"전월")+"에 저장된 급여자료가 없습니다.");[...earnIds,...deductIds].forEach(id=>$(id).value=Number(previous[id]||0).toLocaleString("ko-KR"));$("compLeaveDailyRate").value=Number(previous.compLeaveDailyRate||0).toLocaleString("ko-KR");$("overtimeHourlyRate").value=Number(previous.overtimeHourlyRate||0).toLocaleString("ko-KR");$("compLeaveDays").value=Number(previous.compLeaveDays||0);$("overtimeHours").value=Number(previous.overtimeHours||0);calculateWorkAllowance(Boolean(previous.extraWorkPay&&!previous.compLeaveDailyRate&&!previous.overtimeHourlyRate));$("payType").value=previous.payType||"월급제";$("incomeType").value=previous.incomeType||"근로소득";$("jobType").value=previous.jobType||"";const e=employees.find(x=>x.employeeId===$("employeeId").value);const current=payrolls.find(x=>x.employeeId===$("employeeId").value);if(e)applyKoreaHouseLinkedBasePay(e,current,false);calc();msg("modalMsg","ok",(previousMonth||"전월")+" 급여를 불러왔습니다. 한국의집 연동 대상자는 기본급을 선택월 근로내역 금액으로 다시 적용했습니다.")}
 async function correctPayrollClassification(){
   clear("modalMsg");
 
@@ -495,7 +545,7 @@ async function correctPayrollClassification(){
 }
 
 async function save(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");const b=$("saveBtn");setButtonBusy(b,true,"저장 중...");try{const r=await post({action:"savePayroll",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),updatedBy:$("updatedBy").value});msg("modalMsg","ok",r.message);await load(true)}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
-async function confirmPay(){if(!confirm("저장된 급여를 최종 확정하시겠습니까?\n확정 후 급여금액은 수정할 수 없으며, 급여형태·소득구분·직무만 별도 정정할 수 있습니다."))return;const b=$("confirmBtn");setButtonBusy(b,true,"확정 중...");try{const r=await post({action:"confirmPayroll",month:$("month").value,employeeId:$("employeeId").value,updatedBy:$("updatedBy").value});await load(true);closeModal();msg("mainMsg","ok",r.message+" 확정 후 급여금액은 잠기며 근로구분·급여형태·소득구분·직무만 정정할 수 있습니다.")}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
+async function confirmPay(){if(!canConfirmMonth)return msg("modalMsg","err","현재 급여월은 아직 종료되지 않았습니다. 다음 달 1일부터 최종 확정할 수 있습니다.");if(!confirm("저장된 급여를 최종 확정하시겠습니까?\n확정 후 급여금액은 수정할 수 없으며, 급여형태·소득구분·직무만 별도 정정할 수 있습니다."))return;const b=$("confirmBtn");setButtonBusy(b,true,"확정 중...");try{const r=await post({action:"confirmPayroll",month:$("month").value,employeeId:$("employeeId").value,updatedBy:$("updatedBy").value});await load(true);closeModal();msg("mainMsg","ok",r.message+" 확정 후 급여금액은 잠기며 근로구분·급여형태·소득구분·직무만 정정할 수 있습니다.")}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
 function buildSlip(){
   const e=employees.find(x=>x.employeeId===$("employeeId").value);
   const current=payrolls.find(x=>x.employeeId===$("employeeId").value);
