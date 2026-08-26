@@ -4,6 +4,17 @@
 <title>더큰코리아 급여관리 시스템</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f1eb;color:#25180f;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}button,input,select,textarea{font:inherit}.head{background:linear-gradient(135deg,#3d2414,#74472b);color:#fff;padding:25px 18px}.head>div,.wrap{width:min(1400px,calc(100% - 28px));margin:auto}.head h1{margin:0;font-size:27px}.head p{margin:8px 0 0;opacity:.85}.wrap{padding:20px 0 40px}.card{background:#fff;border:1px solid #e2d6ca;border-radius:17px;padding:17px;margin-bottom:15px;box-shadow:0 6px 19px rgba(67,42,24,.07)}.login{max-width:500px;margin:40px auto;padding:27px}.login h2{margin-top:0}label{display:block;font-size:13px;font-weight:800;color:#59483b}input,select,textarea{width:100%;margin-top:6px;padding:10px 11px;border:1px solid #d7ccc1;border-radius:10px;background:#fff}.btn{border:0;border-radius:10px;padding:10px 14px;background:#4b2d1a;color:#fff;font-weight:800;cursor:pointer}.btn.blue{background:#2563eb}.btn.green{background:#15803d}.btn.gray{background:#70655d}.btn.small{padding:7px 10px;font-size:12px}.login .btn{width:100%;margin-top:14px;transition:transform .08s ease,box-shadow .08s ease,opacity .08s ease}.login .btn:active,.login .btn.login-press{transform:translateY(2px) scale(.995);box-shadow:inset 0 2px 5px rgba(0,0,0,.18);opacity:.9}.login .btn:disabled{cursor:wait;opacity:.75}.toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.toolbar label{min-width:180px;flex:1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}.stat{background:#fff;border:1px solid #e2d6ca;border-radius:14px;padding:15px}.stat span{display:block;color:#817267;font-size:12px}.stat strong{font-size:23px}.table-wrap{overflow:auto;border:1px solid #e2d6ca;border-radius:13px}table{width:100%;min-width:1050px;border-collapse:collapse}th,td{padding:11px 9px;border-bottom:1px solid #eee7df;text-align:center;font-size:13px;white-space:nowrap}th{background:#eee4da;position:sticky;top:0}.left{text-align:left}.badge{padding:4px 8px;border-radius:99px;font-weight:800}.wait{background:#fef3c7;color:#92400e}.saved{background:#dbeafe;color:#1e40af}.confirmed{background:#dcfce7;color:#166534}.modal{display:none;position:fixed;inset:0;background:rgba(20,12,8,.58);z-index:20;overflow:auto;padding:15px}.modal.open{display:block}.box{width:min(980px,100%);margin:20px auto;background:#fff;border-radius:18px;overflow:hidden}.mhead{display:flex;justify-content:space-between;align-items:center;padding:16px 19px;background:#f1e9e1}.mhead h2{margin:0}.close{border:0;background:none;font-size:28px}.summary{padding:13px 19px;background:#fffaf5;border-bottom:1px solid #e2d6ca}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:18px}.section{grid-column:1/-1;color:#4b2d1a;font-weight:900;border-bottom:1px solid #e2d6ca;padding:5px 0}.full{grid-column:1/-1}.totals{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.total{border-radius:12px;padding:13px;background:#f5f1eb}.total strong{display:block;font-size:21px;margin-top:4px}.actions{display:flex;justify-content:flex-end;gap:8px;padding:15px 18px;background:#faf8f6;border-top:1px solid #e2d6ca}.notice{display:none;margin-top:10px;padding:11px;border-radius:10px}.notice.show{display:block}.ok{background:#dcfce7;color:#166534}.err{background:#fee2e2;color:#991b1b}.hidden{display:none!important}
+.action-loading-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(20,12,8,.16);align-items:center;justify-content:center;pointer-events:none}
+.action-loading-overlay.show{display:flex}
+.action-loading-box{display:flex;align-items:center;gap:10px;background:#fff;padding:13px 18px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.18);font-weight:900;color:#4b2d1a}
+.action-spinner{width:20px;height:20px;border:3px solid #e6d7ca;border-top-color:#4b2d1a;border-radius:50%;animation:actionSpin .7s linear infinite}
+@keyframes actionSpin{to{transform:rotate(360deg)}}
+.actions .btn,.toolbar .btn,.manage-buttons .btn{transition:transform .08s ease,box-shadow .08s ease,opacity .08s ease}
+.actions .btn:active,.toolbar .btn:active,.manage-buttons .btn:active,
+.actions .btn.action-press,.toolbar .btn.action-press,.manage-buttons .btn.action-press{transform:translateY(2px) scale(.985);box-shadow:inset 0 2px 5px rgba(0,0,0,.18);opacity:.88}
+.btn.action-busy{position:relative;pointer-events:none;opacity:.72}
+.btn.action-busy::after{content:"";display:inline-block;width:12px;height:12px;margin-left:7px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;vertical-align:-2px;animation:actionSpin .7s linear infinite}
+
 .checkline{display:flex;align-items:center;gap:7px;margin-top:8px;padding:10px 11px;border:1px solid #d7ccc1;border-radius:10px;background:#fff}.checkline input{width:auto;margin:0}.help{grid-column:1/-1;padding:10px 12px;border-radius:10px;background:#fff7ed;color:#9a3412;font-size:12px}.slip{display:none}.slip h1{text-align:center}.slip table{width:100%;min-width:0;border-collapse:collapse;table-layout:fixed;border:1px solid #444}.slip td,.slip th{border:1px solid #444;padding:10px 8px;white-space:normal}.slip thead th,.slip tfoot th{background:#f1f1f1}.slip .sign{text-align:right;margin-top:25px;font-weight:800}.slip.image-export{display:block!important;position:fixed;left:-10000px;top:0;width:800px;padding:38px;background:#fff;color:#25180f;z-index:-1}
 .slip-work-calc{margin-top:24px}
 .slip-work-calc h2{margin:0 0 10px;font-size:18px;color:#3d2414}
@@ -45,7 +56,7 @@
 
 @media(max-width:760px){.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.section,.full{grid-column:1}.totals{grid-template-columns:1fr}.head>div,.wrap{width:calc(100% - 18px)}}
 @media print{html,body{height:auto!important;overflow:visible!important;background:#fff!important}.head,.wrap,.modal{display:none!important}.slip{display:block!important;position:static!important;inset:auto!important;width:100%!important;margin:0!important;padding:25px!important;background:#fff!important}.slip,.slip *{visibility:visible!important}.slip table{width:100%;border-collapse:collapse!important;table-layout:fixed;border:1px solid #444!important}.slip thead,.slip tbody,.slip tfoot,.slip tr{break-inside:avoid}.slip th,.slip td{border:1px solid #444!important;padding:10px 8px!important;white-space:normal!important}.slip thead th,.slip tfoot th{background:#f1f1f1!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.slip tfoot th{font-weight:900}}
-</style></head><body>
+</style></head><body><div id="actionLoadingOverlay" class="action-loading-overlay"><div class="action-loading-box"><span class="action-spinner"></span><span id="actionLoadingText">처리 중...</span></div></div>
 <header class="head"><div><h1>더큰코리아 급여관리 시스템</h1><p>직원 급여 작성·확정, 급여명세서, 인사상태 및 퇴직급여를 통합 관리합니다.</p></div></header>
 <main class="wrap">
 <section id="login" class="card login">
@@ -183,7 +194,33 @@ function formatMoneyInput(input) {
   input.value = digits ? Number(digits).toLocaleString("ko-KR") : "0";
 }
 function msg(id,type,text){$(id).className="notice show "+type;$(id).textContent=text}function clear(id){$(id).className="notice";$(id).textContent=""}
-async function post(data){if(!API_URL.startsWith("https://script.google.com/macros/s/"))throw Error("HTML의 API_URL에 급여 테스트 웹앱 주소를 입력하세요.");const r=await fetch(API_URL,{method:"POST",body:JSON.stringify({...data,adminPin:pin})});const j=await r.json();if(!j.ok)throw Error(j.message||"처리 실패");return j}
+let pendingRequests=0;
+function showActionLoading(text="처리 중..."){
+  pendingRequests++;
+  const overlay=$("actionLoadingOverlay");
+  const label=$("actionLoadingText");
+  if(label)label.textContent=text;
+  if(overlay)overlay.classList.add("show");
+}
+function hideActionLoading(){
+  pendingRequests=Math.max(0,pendingRequests-1);
+  if(pendingRequests===0){
+    const overlay=$("actionLoadingOverlay");
+    if(overlay)overlay.classList.remove("show");
+  }
+}
+async function post(data){
+  if(!API_URL.startsWith("https://script.google.com/macros/s/"))throw Error("HTML의 API_URL에 급여관리 웹앱 주소를 입력하세요.");
+  showActionLoading("처리 중...");
+  try{
+    const r=await fetch(API_URL,{method:"POST",body:JSON.stringify({...data,adminPin:pin})});
+    const j=await r.json();
+    if(!j.ok)throw Error(j.message||"처리 실패");
+    return j;
+  }finally{
+    hideActionLoading();
+  }
+}
 function thisMonth(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}$("month").value=thisMonth();
 function koreaHouseStoreId(){
   const exact=storeOptions.find(s=>String(s.storeName||"").replace(/\s+/g,"").includes("한국의집"));
@@ -361,10 +398,10 @@ function updateInsuranceSelectionPolicy(resetBusiness){
 }
 $("incomeType").addEventListener("change",()=>updateInsuranceSelectionPolicy(true));
 $("payType").addEventListener("change",()=>updateInsuranceSelectionPolicy(false));
-async function saveInsuranceSetting(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");try{const r=await post({action:"savePayrollSetting",employeeId:$("employeeId").value,setting:payrollSettingData(),updatedBy:$("updatedBy").value});payrollSetting=r.setting;msg("modalMsg","ok",r.message)}catch(e){msg("modalMsg","err",e.message)}}
-async function autoCalculateDeductions(){try{const r=await post({action:"calculatePayrollDeductions",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),setting:payrollSettingData()});const c=r.calculation||{};["pension","health","longTermCare","employmentInsurance","incomeTax","localIncomeTax"].forEach(id=>$(id).value=Number(c[id]||0).toLocaleString("ko-KR"));calc();const detail="과세급여 "+won(c.taxablePay)+" · 비과세급여 "+won(c.nonTaxPay);const warning=(c.warnings||[]).length?" / "+c.warnings.join(" "):"";msg("modalMsg","ok","공제를 자동 계산했습니다. "+detail+warning)}catch(e){msg("modalMsg","err",e.message)}}
+async function saveInsuranceSetting(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");const b=$("settingBtn");setButtonBusy(b,true,"저장 중...");try{const r=await post({action:"savePayrollSetting",employeeId:$("employeeId").value,setting:payrollSettingData(),updatedBy:$("updatedBy").value});payrollSetting=r.setting;msg("modalMsg","ok",r.message)}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
+async function autoCalculateDeductions(){const b=$("autoCalcBtn");setButtonBusy(b,true,"계산 중...");try{const r=await post({action:"calculatePayrollDeductions",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),setting:payrollSettingData()});const c=r.calculation||{};["pension","health","longTermCare","employmentInsurance","incomeTax","localIncomeTax"].forEach(id=>$(id).value=Number(c[id]||0).toLocaleString("ko-KR"));calc();const detail="과세급여 "+won(c.taxablePay)+" · 비과세급여 "+won(c.nonTaxPay);const warning=(c.warnings||[]).length?" / "+c.warnings.join(" "):"";msg("modalMsg","ok","공제를 자동 계산했습니다. "+detail+warning)}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
 function standardData(){return{payType:$("payType").value,incomeType:$("incomeType").value,jobType:$("jobType").value,basePay:num("basePay"),overtimePay:num("overtimePay"),jobAllowance:num("jobAllowance"),positionAllowance:num("positionAllowance"),mealAllowance:num("mealAllowance"),vehicleAllowance:num("vehicleAllowance"),otherPay:num("otherPay"),compLeaveDailyRate:num("compLeaveDailyRate"),overtimeHourlyRate:num("overtimeHourlyRate")}}
-async function saveStandard(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");try{const r=await post({action:"savePayStandard",employeeId:$("employeeId").value,standard:standardData(),updatedBy:$("updatedBy").value});const index=payStandards.findIndex(x=>x.employeeId===r.standard.employeeId);if(index>=0)payStandards[index]=r.standard;else payStandards.push(r.standard);msg("modalMsg","ok",r.message+" 추가근무수당·미휴무수당과 공제항목은 월별 변동항목이므로 기준에 저장하지 않습니다.")}catch(e){msg("modalMsg","err",e.message)}}
+async function saveStandard(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");const b=$("standardBtn");setButtonBusy(b,true,"저장 중...");try{const r=await post({action:"savePayStandard",employeeId:$("employeeId").value,standard:standardData(),updatedBy:$("updatedBy").value});const index=payStandards.findIndex(x=>x.employeeId===r.standard.employeeId);if(index>=0)payStandards[index]=r.standard;else payStandards.push(r.standard);msg("modalMsg","ok",r.message+" 추가근무수당·미휴무수당과 공제항목은 월별 변동항목이므로 기준에 저장하지 않습니다.")}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
 function loadPreviousPayroll(){const employeeId=$("employeeId").value,previous=previousPayrolls.find(x=>x.employeeId===employeeId);if(!previous)return msg("modalMsg","err",(previousMonth||"전월")+"에 저장된 급여자료가 없습니다.");[...earnIds,...deductIds].forEach(id=>$(id).value=Number(previous[id]||0).toLocaleString("ko-KR"));$("compLeaveDailyRate").value=Number(previous.compLeaveDailyRate||0).toLocaleString("ko-KR");$("overtimeHourlyRate").value=Number(previous.overtimeHourlyRate||0).toLocaleString("ko-KR");$("compLeaveDays").value=Number(previous.compLeaveDays||0);$("overtimeHours").value=Number(previous.overtimeHours||0);calculateWorkAllowance(Boolean(previous.extraWorkPay&&!previous.compLeaveDailyRate&&!previous.overtimeHourlyRate));$("payType").value=previous.payType||"월급제";$("incomeType").value=previous.incomeType||"근로소득";$("jobType").value=previous.jobType||"";calc();msg("modalMsg","ok",(previousMonth||"전월")+" 급여를 불러왔습니다. 변동항목을 확인한 뒤 저장하세요.")}
 async function correctPayrollClassification(){
   clear("modalMsg");
@@ -420,8 +457,8 @@ async function correctPayrollClassification(){
   }
 }
 
-async function save(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");try{const r=await post({action:"savePayroll",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),updatedBy:$("updatedBy").value});msg("modalMsg","ok",r.message);await load(true)}catch(e){msg("modalMsg","err",e.message)}}
-async function confirmPay(){if(!confirm("저장된 급여를 최종 확정하시겠습니까?\n확정 후 급여금액은 수정할 수 없으며, 급여형태·소득구분·직무만 별도 정정할 수 있습니다."))return;try{const r=await post({action:"confirmPayroll",month:$("month").value,employeeId:$("employeeId").value,updatedBy:$("updatedBy").value});await load(true);closeModal();msg("mainMsg","ok",r.message+" 확정 후 급여금액은 잠기며 급여형태·소득구분·직무만 정정할 수 있습니다.")}catch(e){msg("modalMsg","err",e.message)}}
+async function save(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");const b=$("saveBtn");setButtonBusy(b,true,"저장 중...");try{const r=await post({action:"savePayroll",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),updatedBy:$("updatedBy").value});msg("modalMsg","ok",r.message);await load(true)}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
+async function confirmPay(){if(!confirm("저장된 급여를 최종 확정하시겠습니까?\n확정 후 급여금액은 수정할 수 없으며, 급여형태·소득구분·직무만 별도 정정할 수 있습니다."))return;const b=$("confirmBtn");setButtonBusy(b,true,"확정 중...");try{const r=await post({action:"confirmPayroll",month:$("month").value,employeeId:$("employeeId").value,updatedBy:$("updatedBy").value});await load(true);closeModal();msg("mainMsg","ok",r.message+" 확정 후 급여금액은 잠기며 급여형태·소득구분·직무만 정정할 수 있습니다.")}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
 function buildSlip(){
   const e=employees.find(x=>x.employeeId===$("employeeId").value);
   const current=payrolls.find(x=>x.employeeId===$("employeeId").value);
@@ -628,5 +665,30 @@ document.addEventListener("DOMContentLoaded",()=>{
     });
   }
 });
+
+
+document.addEventListener("click",event=>{
+  const btn=event.target.closest("button.btn");
+  if(!btn)return;
+  btn.classList.add("action-press");
+  setTimeout(()=>btn.classList.remove("action-press"),160);
+});
+
+function setButtonBusy(button,busy,busyText){
+  if(!button)return;
+  if(busy){
+    if(!button.dataset.originalText)button.dataset.originalText=button.textContent;
+    button.classList.add("action-busy");
+    button.disabled=true;
+    if(busyText)button.textContent=busyText;
+  }else{
+    button.classList.remove("action-busy");
+    button.disabled=false;
+    if(button.dataset.originalText){
+      button.textContent=button.dataset.originalText;
+      delete button.dataset.originalText;
+    }
+  }
+}
 
 </script></body></html>
