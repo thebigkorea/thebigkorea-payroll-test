@@ -313,8 +313,9 @@ async function openPay(id){
     payrollSetting=r.setting||{};
     applyPayrollSetting(payrollSetting);
 
-    // 확정 급여는 실제 급여원장의 분류값이 우선입니다.
-    if(locked&&current){
+    // 현재 월에 이미 저장된 급여자료가 있으면 급여원장 값을 최우선으로 사용합니다.
+    // 보험·세금 설정의 incomeType이 과거 값이어도 현재 월 급여분류를 덮어쓰지 않습니다.
+    if(current){
       $("payType").value=current.payType||e.payType||"월급제";
       $("incomeType").value=current.incomeType||"근로소득";
       $("jobType").value=current.jobType||e.position||e.department||"";
@@ -379,7 +380,7 @@ function calculateWorkAllowance(preserveLegacy){const compAmount=Math.round(num(
 document.querySelectorAll(".work-calc").forEach(function(input){input.addEventListener("input",function(){if(input.classList.contains("money-setting"))formatMoneyInput(input);calculateWorkAllowance(false)});input.addEventListener("focus",function(){input.select()})});
 function data(){return{payType:$("payType").value,incomeType:$("incomeType").value,jobType:$("jobType").value,note:$("note").value,compLeavePay:0,compLeaveDailyRate:num("compLeaveDailyRate"),compLeaveDays:decimalValue("compLeaveDays"),calculatedCompLeavePay:num("calculatedCompLeavePay"),overtimeHourlyRate:num("overtimeHourlyRate"),overtimeHours:decimalValue("overtimeHours"),calculatedOvertimePay:num("calculatedOvertimePay"),...Object.fromEntries([...earnIds,...deductIds].map(x=>[x,num(x)]))}}
 function payrollSettingData(){return{incomeType:$("incomeType").value,dependents:Number($("dependents").value||1),children:Number($("children").value||0),pensionEnrolled:$("pensionEnrolled").checked,healthEnrolled:$("healthEnrolled").checked,longTermCareEnrolled:$("longTermCareEnrolled").checked,employmentEnrolled:$("employmentEnrolled").checked,pensionBase:num("pensionBase"),pensionMonthlyAmount:num("pensionMonthlyAmount"),pensionStartMonth:$("pensionStartMonth").value,pensionEndMonth:$("pensionEndMonth").value,pensionCalcType:$("pensionCalcType").value,healthBase:num("healthBase"),employmentBase:num("employmentBase"),vehicleNonTaxEligible:$("vehicleNonTaxEligible").checked}}
-function applyPayrollSetting(s){$("dependents").value=s.dependents||1;$("children").value=s.children||0;["pensionBase","pensionMonthlyAmount","healthBase","employmentBase"].forEach(id=>$(id).value=Number(s[id]||0).toLocaleString("ko-KR"));$("pensionStartMonth").value=s.pensionStartMonth||"";$("pensionEndMonth").value=s.pensionEndMonth||"";$("pensionCalcType").value=s.pensionCalcType||"정기결정";["pensionEnrolled","healthEnrolled","longTermCareEnrolled","employmentEnrolled","vehicleNonTaxEligible"].forEach(id=>$(id).checked=Boolean(s[id]));if(s.incomeType)$("incomeType").value=s.incomeType}
+function applyPayrollSetting(s){$("dependents").value=s.dependents||1;$("children").value=s.children||0;["pensionBase","pensionMonthlyAmount","healthBase","employmentBase"].forEach(id=>$(id).value=Number(s[id]||0).toLocaleString("ko-KR"));$("pensionStartMonth").value=s.pensionStartMonth||"";$("pensionEndMonth").value=s.pensionEndMonth||"";$("pensionCalcType").value=s.pensionCalcType||"정기결정";["pensionEnrolled","healthEnrolled","longTermCareEnrolled","employmentEnrolled","vehicleNonTaxEligible"].forEach(id=>$(id).checked=Boolean(s[id]));}
 function updateInsuranceSelectionPolicy(resetBusiness){
   if(currentPayrollLocked)return;
   const monthlyEmployee=$("payType").value==="월급제"&&$("incomeType").value==="근로소득";
