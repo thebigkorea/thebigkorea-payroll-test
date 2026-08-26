@@ -71,11 +71,11 @@
 <section id="app" class="hidden">
 <div class="stats"><div class="stat"><span>대상 직원</span><strong id="cnt">0명</strong></div><div class="stat"><span>저장 완료</span><strong id="savedCnt">0명</strong></div><div class="stat"><span>확정</span><strong id="confirmedCnt">0명</strong></div><div class="stat"><span>실지급 합계</span><strong id="netSum">0원</strong></div></div>
 <section class="card"><div class="toolbar"><label>급여월<input id="month" type="month"></label><label>점포<select id="store" onchange="render()"><option value="">전체 점포</option></select></label><label>직원 검색<input id="keyword" type="search" oninput="render()" placeholder="이름·직무"></label><button class="btn" onclick="load()">조회</button><button class="btn green" onclick="openMissingEmployeeRegistration()">누락 직원 등록</button><button class="btn blue" onclick="openBusinessHistory()">과거 사업소득 일괄입력</button></div><div id="mainMsg" class="notice"></div></section>
-<section class="card"><div class="table-wrap"><table><thead><tr><th>점포</th><th>직원</th><th>직무</th><th>급여형태</th><th>지급합계</th><th>공제합계</th><th>실지급액</th><th>상태</th><th>급여·인사 관리 <span class="version-tag">인사상태 적용</span></th></tr></thead><tbody id="body"><tr><td colspan="9">급여월을 선택하고 조회하세요.</td></tr></tbody></table></div></section>
+<section class="card"><div class="table-wrap"><table><thead><tr><th>점포</th><th>직원</th><th>근로구분</th><th>직무</th><th>급여형태</th><th>지급합계</th><th>공제합계</th><th>실지급액</th><th>상태</th><th>급여·인사 관리 <span class="version-tag">인사상태 적용</span></th></tr></thead><tbody id="body"><tr><td colspan="10">급여월을 선택하고 조회하세요.</td></tr></tbody></table></div></section>
 </section></main>
 
 <div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="box"><div class="mhead"><h2>직원 급여 계산</h2><button class="close" onclick="closeModal()">×</button></div><div class="summary"><strong id="empName"></strong><div id="empInfo"></div></div>
-<div class="grid"><input id="employeeId" type="hidden"><input id="updatedBy" type="hidden" value="급여담당자"><div class="section">급여 기본설정</div><label>급여형태<select id="payType"><option>월급제</option><option>시급제</option><option>일급제</option></select></label><label>소득구분<select id="incomeType"><option>근로소득</option><option>사업소득</option><option>일용근로소득</option></select></label><label>직무<select id="jobType"><option value="">선택하세요</option><option value="홀서빙">홀서빙</option><option value="주방조리">주방조리</option><option value="홀퇴식">홀퇴식</option><option value="설거지">설거지</option><option value="총괄">총괄</option></select></label><div class="help">급여형태와 소득구분을 먼저 선택하세요. 월급제 근로소득은 4대보험이 자동 적용되며, 사업소득은 4대보험이 자동 해제됩니다.</div><div class="section">지급항목</div>
+<div class="grid"><input id="employeeId" type="hidden"><input id="updatedBy" type="hidden" value="급여담당자"><div class="section">급여 기본설정</div><label>근로구분<select id="workerType"><option value="">선택하세요</option><option value="정직원">정직원</option><option value="아르바이트">아르바이트</option><option value="일용직">일용직</option><option value="외국인">외국인</option></select></label><label>급여형태<select id="payType"><option>월급제</option><option>시급제</option><option>일급제</option></select></label><label>소득구분<select id="incomeType"><option>근로소득</option><option>사업소득</option><option>일용근로소득</option></select></label><label>직무<select id="jobType"><option value="">선택하세요</option><option value="홀서빙">홀서빙</option><option value="주방조리">주방조리</option><option value="홀퇴식">홀퇴식</option><option value="설거지">설거지</option><option value="총괄">총괄</option></select></label><div class="help">급여형태와 소득구분을 먼저 선택하세요. 월급제 근로소득은 4대보험이 자동 적용되며, 사업소득은 4대보험이 자동 해제됩니다.</div><div class="section">지급항목</div>
 <label>기본급<input class="calc earn" id="basePay" type="text" inputmode="numeric"></label><label>연장수당<input class="calc earn" id="overtimePay" type="text" inputmode="numeric"></label><label>직무수당<input class="calc earn" id="jobAllowance" type="text" inputmode="numeric"></label><label>직책수당<input class="calc earn" id="positionAllowance" type="text" inputmode="numeric"></label><label>추가근무수당<input class="calc earn" id="extraWorkPay" type="text" inputmode="numeric" readonly></label><input id="compLeavePay" type="hidden" value="0"><label>식대<input class="calc earn" id="mealAllowance" type="text" inputmode="numeric"></label><label>차량유지비<input class="calc earn" id="vehicleAllowance" type="text" inputmode="numeric"></label><label>기타지급<input class="calc earn" id="otherPay" type="text" inputmode="numeric"></label>
 <div class="section">추가근무수당 계산</div><label>미휴무 1일 기준액<input class="money-setting work-calc" id="compLeaveDailyRate" type="text" inputmode="numeric"></label><label>미휴무 일수<input class="work-calc" id="compLeaveDays" type="number" min="0" step="0.5" value="0"></label><label>미휴무 계산액<input id="calculatedCompLeavePay" type="text" readonly></label><label>연장근로 1시간 기준액<input class="money-setting work-calc" id="overtimeHourlyRate" type="text" inputmode="numeric"></label><label>연장근로시간<input class="work-calc" id="overtimeHours" type="number" min="0" step="0.5" value="0"></label><label>연장근로 계산액<input id="calculatedOvertimePay" type="text" readonly></label><div class="help">미휴무 일수 × 미휴무 1일 기준액 + 연장근로시간 × 연장근로 1시간 기준액을 추가근무수당으로 자동 합산합니다. 기준액은 급여기준 저장, 일수와 시간은 월 급여 저장에 보관됩니다.</div>
 <div class="section">공제항목</div><label>국민연금<input class="calc deduct" id="pension" type="text" inputmode="numeric"></label><label>건강보험<input class="calc deduct" id="health" type="text" inputmode="numeric"></label><label>장기요양보험<input class="calc deduct" id="longTermCare" type="text" inputmode="numeric"></label><label>고용보험<input class="calc deduct" id="employmentInsurance" type="text" inputmode="numeric"></label><label>소득세<input class="calc deduct" id="incomeTax" type="text" inputmode="numeric"></label><label>지방소득세<input class="calc deduct" id="localIncomeTax" type="text" inputmode="numeric"></label><label>기타공제<input class="calc deduct" id="otherDeduction" type="text" inputmode="numeric"></label>
@@ -84,7 +84,7 @@
 <label><span class="checkline"><input id="pensionEnrolled" type="checkbox">국민연금 가입</span></label><label><span class="checkline"><input id="healthEnrolled" type="checkbox">건강보험 가입</span></label><label><span class="checkline"><input id="longTermCareEnrolled" type="checkbox">장기요양보험 가입</span></label><label><span class="checkline"><input id="employmentEnrolled" type="checkbox">고용보험 가입</span></label><label><span class="checkline"><input id="vehicleNonTaxEligible" type="checkbox">차량유지비 비과세 대상</span></label>
 <div class="help">기존 가입자는 공단에서 결정된 국민연금 월 공제액을 입력하고 매년 7월부터 다음 해 6월까지 적용합니다. 신규취득자만 신고 기준소득월액으로 최초 계산합니다. 건강보험·고용보험 보수월액이 0원이면 현재 과세급여로 임시 계산합니다.</div>
 <div class="section">비고</div><label class="full">비고<textarea id="note"></textarea></label>
-<div class="totals"><div class="total">지급합계<strong id="gross">0원</strong></div><div class="total">공제합계<strong id="deduct">0원</strong></div><div class="total">실지급액<strong id="net">0원</strong></div></div></div><div id="modalMsg" class="notice" style="margin:0 18px 12px"></div><div class="actions"><button class="btn gray" onclick="closeModal()">닫기</button><button id="settingBtn" class="btn" onclick="saveInsuranceSetting()">보험·세금 설정 저장</button><button id="autoCalcBtn" class="btn green" onclick="autoCalculateDeductions()">공제 자동계산</button><button id="standardBtn" class="btn" onclick="saveStandard()">급여기준 저장</button><button id="previousBtn" class="btn" onclick="loadPreviousPayroll()">전월 급여 불러오기</button><button class="btn" onclick="previewSlip()">명세서 미리보기</button><button class="btn" onclick="makeKakaoImage()">카톡용 이미지</button><button id="classificationBtn" class="btn blue hidden" onclick="correctPayrollClassification()">급여분류·직무 정정</button><button id="saveBtn" class="btn blue" onclick="save()">저장</button><button id="confirmBtn" class="btn green" onclick="confirmPay()">최종 확정</button></div></div></div>
+<div class="totals"><div class="total">지급합계<strong id="gross">0원</strong></div><div class="total">공제합계<strong id="deduct">0원</strong></div><div class="total">실지급액<strong id="net">0원</strong></div></div></div><div id="modalMsg" class="notice" style="margin:0 18px 12px"></div><div class="actions"><button class="btn gray" onclick="closeModal()">닫기</button><button id="settingBtn" class="btn" onclick="saveInsuranceSetting()">보험·세금 설정 저장</button><button id="autoCalcBtn" class="btn green" onclick="autoCalculateDeductions()">공제 자동계산</button><button id="standardBtn" class="btn" onclick="saveStandard()">급여기준 저장</button><button id="previousBtn" class="btn" onclick="loadPreviousPayroll()">전월 급여 불러오기</button><button class="btn" onclick="previewSlip()">명세서 미리보기</button><button class="btn" onclick="makeKakaoImage()">카톡용 이미지</button><button id="classificationBtn" class="btn blue hidden" onclick="correctPayrollClassification()">근로구분·급여분류·직무 정정</button><button id="saveBtn" class="btn blue" onclick="save()">저장</button><button id="confirmBtn" class="btn green" onclick="confirmPay()">최종 확정</button></div></div></div>
 
 <div id="employmentStatusModal" class="modal" onclick="if(event.target===this)closeEmploymentStatus()"><div class="box" style="width:min(760px,100%)"><div class="mhead"><h2>휴직·복직·퇴직 변경 <span class="version-tag">통합인사DB 반영</span></h2><button class="close" onclick="closeEmploymentStatus()">×</button></div><div class="summary"><strong id="statusEmployeeName"></strong><div id="statusEmployeeInfo"></div></div><div class="grid"><input id="statusEmployeeId" type="hidden"><div class="section">인사상태 변경</div><label>현재 상태<div id="currentEmploymentStatus" class="status-current">-</div></label><label>변경 구분<select id="statusAction" onchange="toggleEmploymentDates()"><option value="">선택하세요</option><option value="휴직">휴직 시작</option><option value="복직">휴직 종료·복직</option><option value="퇴직">퇴직</option></select></label><div></div><label id="leaveStartWrap" class="status-date">휴직 시작일<input id="leaveStart" type="date"></label><label id="leaveEndWrap" class="status-date">휴직 종료예정일<input id="leaveEnd" type="date"></label><label id="returnDateWrap" class="status-date">복직일<input id="returnDate" type="date"></label><label id="retirementDateWrap" class="status-date">퇴직일<input id="retirementDate" type="date"></label><label class="full">변경 사유<textarea id="statusReason" placeholder="예: 육아휴직, 개인사정 퇴직"></textarea></label><div class="help">직원을 삭제하지 않습니다. 변경 결과는 통합 인사DB의 직원원장에 반영되고 인사변동이력에 별도로 보존됩니다.</div></div><div id="employmentStatusMsg" class="notice" style="margin:0 18px 12px"></div><div class="actions"><button class="btn gray" onclick="closeEmploymentStatus()">닫기</button><button class="btn green" onclick="saveEmploymentStatus()">통합 인사DB에 반영</button></div></div></div>
 <!-- FINAL-UI-20260824-NEWEMPLOYEE-PII-BANK-V2 -->
@@ -222,6 +222,15 @@ async function post(data){
   }
 }
 function thisMonth(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")}$("month").value=thisMonth();
+function normalizeWorkerType(value){
+  const v=String(value||"").trim();
+  if(!v)return "";
+  if(v==="정직원"||v.includes("정규"))return "정직원";
+  if(v==="아르바이트"||v.includes("아르바이트")||v.includes("파트타임"))return "아르바이트";
+  if(v==="일용직"||v.includes("일용"))return "일용직";
+  if(v==="외국인"||v.includes("외국"))return "외국인";
+  return "";
+}
 function koreaHouseStoreId(){
   const exact=storeOptions.find(s=>String(s.storeName||"").replace(/\s+/g,"").includes("한국의집"));
   return exact ? String(exact.storeId) : "";
@@ -279,7 +288,30 @@ async function load(resetToKoreaHouse=false){
     render();
   }catch(e){msg($("app").classList.contains("hidden")?"loginMsg":"mainMsg","err",e.message);throw e}
 }
-function render(){const s=$("store").value,k=$("keyword").value.toLowerCase();const list=employees.filter(e=>(!s||e.storeId===s)&&(!k||`${e.name} ${e.position}`.toLowerCase().includes(k)));const map=Object.fromEntries(payrolls.map(p=>[p.employeeId,p]));$("body").innerHTML=list.length?list.map(e=>{const p=map[e.employeeId],st=p?.status||"미작성",cls=st==="확정"?"confirmed":p?"saved":"wait",buttonText=!p?"작성":st==="확정"?"명세서 보기":"조회·수정";return `<tr><td class="left">${e.storeName}</td><td><strong>${e.name}</strong></td><td>${p?.jobType||e.position||e.department||"-"}</td><td>${p?.payType||e.payType||"-"}</td><td>${p?won(p.grossPay):"-"}</td><td>${p?won(p.totalDeduction):"-"}</td><td>${p?won(p.netPay):"-"}</td><td><span class="badge ${cls}">${st}</span></td><td><div class="manage-buttons"><button class="btn small" onclick="openPay('${e.employeeId}')">${buttonText}</button><button class="btn small green" onclick="openEmploymentStatusFor('${e.employeeId}')">인사상태</button><button class="btn small gray" onclick="openRetirementFor('${e.employeeId}')">퇴직급여</button></div></td></tr>`}).join(""):'<tr><td colspan="9">직원이 없습니다.</td></tr>';const saved=payrolls.length,confirmed=payrolls.filter(p=>p.status==="확정").length;$("cnt").textContent=employees.length+"명";$("savedCnt").textContent=saved+"명";$("confirmedCnt").textContent=confirmed+"명";$("netSum").textContent=won(payrolls.reduce((a,p)=>a+p.netPay,0))}
+function render(){
+  const s=$("store").value,k=$("keyword").value.toLowerCase();
+  const map=Object.fromEntries(payrolls.map(p=>[p.employeeId,p]));
+  const workerTypeOrder={"정직원":1,"아르바이트":2,"일용직":3,"외국인":4};
+  const payTypeOrder={"월급제":1,"시급제":2,"일급제":3};
+
+  const list=employees
+    .filter(e=>(!s||e.storeId===s)&&(!k||`${e.name} ${e.position||""} ${e.department||""}`.toLowerCase().includes(k)))
+    .sort((a,b)=>{
+      const wa=normalizeWorkerType(map[a.employeeId]?.employmentType||a.employmentType||"");
+      const wb=normalizeWorkerType(map[b.employeeId]?.employmentType||b.employmentType||"");
+      const woa=workerTypeOrder[wa]||99;
+      const wob=workerTypeOrder[wb]||99;
+      if(woa!==wob)return woa-wob;
+
+      const pa=map[a.employeeId]?.payType||a.payType||"";
+      const pb=map[b.employeeId]?.payType||b.payType||"";
+      const poa=payTypeOrder[pa]||99;
+      const pob=payTypeOrder[pb]||99;
+      if(poa!==pob)return poa-pob;
+
+      return String(a.name||"").localeCompare(String(b.name||""),"ko");
+    });
+$("body").innerHTML=list.length?list.map(e=>{const p=map[e.employeeId],st=p?.status||"미작성",cls=st==="확정"?"confirmed":p?"saved":"wait",buttonText=!p?"작성":st==="확정"?"명세서 보기":"조회·수정";return `<tr><td class="left">${e.storeName}</td><td><strong>${e.name}</strong></td><td>${normalizeWorkerType(p?.employmentType||e.employmentType)||"-"}</td><td>${p?.jobType||e.position||e.department||"-"}</td><td>${p?.payType||e.payType||"-"}</td><td>${p?won(p.grossPay):"-"}</td><td>${p?won(p.totalDeduction):"-"}</td><td>${p?won(p.netPay):"-"}</td><td><span class="badge ${cls}">${st}</span></td><td><div class="manage-buttons"><button class="btn small" onclick="openPay('${e.employeeId}')">${buttonText}</button><button class="btn small green" onclick="openEmploymentStatusFor('${e.employeeId}')">인사상태</button><button class="btn small gray" onclick="openRetirementFor('${e.employeeId}')">퇴직급여</button></div></td></tr>`}).join(""):'<tr><td colspan="10">직원이 없습니다.</td></tr>';const saved=payrolls.length,confirmed=payrolls.filter(p=>p.status==="확정").length;$("cnt").textContent=employees.length+"명";$("savedCnt").textContent=saved+"명";$("confirmedCnt").textContent=confirmed+"명";$("netSum").textContent=won(payrolls.reduce((a,p)=>a+p.netPay,0))}
 async function openPay(id){
   clear("modalMsg");
   const e=employees.find(x=>x.employeeId===id),
@@ -303,7 +335,7 @@ async function openPay(id){
   calculateWorkAllowance(Boolean(current&&p.extraWorkPay&&!p.compLeaveDailyRate&&!p.overtimeHourlyRate));
 
   $("payType").value=p.payType||e.payType||"월급제";
-  $("incomeType").value=p.incomeType||((e.employmentType||"").includes("사업")?"사업소득":"근로소득");$("jobType").value=p.jobType||e.position||e.department||"";
+  $("incomeType").value=p.incomeType||((e.employmentType||"").includes("사업")?"사업소득":"근로소득");$("workerType").value=normalizeWorkerType(p.employmentType||e.employmentType||"");$("jobType").value=p.jobType||e.position||e.department||"";
   $("updatedBy").value=p.updatedBy||"급여담당자";
   $("note").value=current?.note||"";
   $("modal").classList.add("open");
@@ -318,6 +350,7 @@ async function openPay(id){
     if(current){
       $("payType").value=current.payType||e.payType||"월급제";
       $("incomeType").value=current.incomeType||"근로소득";
+      $("workerType").value=normalizeWorkerType(current.employmentType||e.employmentType||"");
       $("jobType").value=current.jobType||e.position||e.department||"";
     }
   }catch(error){
@@ -332,6 +365,7 @@ async function openPay(id){
     // 확정 후에도 이 두 항목만 정정할 수 있습니다.
     $("payType").disabled=false;
     $("incomeType").disabled=false;
+    $("workerType").disabled=false;
     $("jobType").disabled=false;
     $("classificationBtn").classList.remove("hidden");
 
@@ -342,7 +376,7 @@ async function openPay(id){
     msg(
       "modalMsg",
       "ok",
-      "최종 확정된 급여입니다. 금액은 수정할 수 없으며 급여형태·소득구분·직무만 정정할 수 있습니다."
+      "최종 확정된 급여입니다. 금액은 수정할 수 없으며 근로구분·급여형태·소득구분·직무만 정정할 수 있습니다."
     );
   }else{
     $("classificationBtn").classList.add("hidden");
@@ -378,7 +412,7 @@ document.querySelectorAll(".money-setting").forEach(function(input){input.addEve
 function decimalValue(id){const value=Number($(id).value||0);return Number.isFinite(value)?Math.max(0,value):0}
 function calculateWorkAllowance(preserveLegacy){const compAmount=Math.round(num("compLeaveDailyRate")*decimalValue("compLeaveDays")),overtimeAmount=Math.round(num("overtimeHourlyRate")*decimalValue("overtimeHours"));$("calculatedCompLeavePay").value=compAmount.toLocaleString("ko-KR");$("calculatedOvertimePay").value=overtimeAmount.toLocaleString("ko-KR");if(!preserveLegacy)$("extraWorkPay").value=(compAmount+overtimeAmount).toLocaleString("ko-KR");$("compLeavePay").value="0";calc()}
 document.querySelectorAll(".work-calc").forEach(function(input){input.addEventListener("input",function(){if(input.classList.contains("money-setting"))formatMoneyInput(input);calculateWorkAllowance(false)});input.addEventListener("focus",function(){input.select()})});
-function data(){return{payType:$("payType").value,incomeType:$("incomeType").value,jobType:$("jobType").value,note:$("note").value,compLeavePay:0,compLeaveDailyRate:num("compLeaveDailyRate"),compLeaveDays:decimalValue("compLeaveDays"),calculatedCompLeavePay:num("calculatedCompLeavePay"),overtimeHourlyRate:num("overtimeHourlyRate"),overtimeHours:decimalValue("overtimeHours"),calculatedOvertimePay:num("calculatedOvertimePay"),...Object.fromEntries([...earnIds,...deductIds].map(x=>[x,num(x)]))}}
+function data(){return{employmentType:$("workerType").value,payType:$("payType").value,incomeType:$("incomeType").value,jobType:$("jobType").value,note:$("note").value,compLeavePay:0,compLeaveDailyRate:num("compLeaveDailyRate"),compLeaveDays:decimalValue("compLeaveDays"),calculatedCompLeavePay:num("calculatedCompLeavePay"),overtimeHourlyRate:num("overtimeHourlyRate"),overtimeHours:decimalValue("overtimeHours"),calculatedOvertimePay:num("calculatedOvertimePay"),...Object.fromEntries([...earnIds,...deductIds].map(x=>[x,num(x)]))}}
 function payrollSettingData(){return{incomeType:$("incomeType").value,dependents:Number($("dependents").value||1),children:Number($("children").value||0),pensionEnrolled:$("pensionEnrolled").checked,healthEnrolled:$("healthEnrolled").checked,longTermCareEnrolled:$("longTermCareEnrolled").checked,employmentEnrolled:$("employmentEnrolled").checked,pensionBase:num("pensionBase"),pensionMonthlyAmount:num("pensionMonthlyAmount"),pensionStartMonth:$("pensionStartMonth").value,pensionEndMonth:$("pensionEndMonth").value,pensionCalcType:$("pensionCalcType").value,healthBase:num("healthBase"),employmentBase:num("employmentBase"),vehicleNonTaxEligible:$("vehicleNonTaxEligible").checked}}
 function applyPayrollSetting(s){$("dependents").value=s.dependents||1;$("children").value=s.children||0;["pensionBase","pensionMonthlyAmount","healthBase","employmentBase"].forEach(id=>$(id).value=Number(s[id]||0).toLocaleString("ko-KR"));$("pensionStartMonth").value=s.pensionStartMonth||"";$("pensionEndMonth").value=s.pensionEndMonth||"";$("pensionCalcType").value=s.pensionCalcType||"정기결정";["pensionEnrolled","healthEnrolled","longTermCareEnrolled","employmentEnrolled","vehicleNonTaxEligible"].forEach(id=>$(id).checked=Boolean(s[id]));}
 function updateInsuranceSelectionPolicy(resetBusiness){
@@ -414,12 +448,13 @@ async function correctPayrollClassification(){
     return msg("modalMsg","err","최종 확정된 급여에서만 분류 정정을 사용할 수 있습니다.");
   }
 
+  const workerType=$("workerType").value;
   const payType=$("payType").value;
   const incomeType=$("incomeType").value;
   const jobType=$("jobType").value;
 
-  const before=`${current.payType||"-"} / ${current.incomeType||"-"} / ${current.jobType||"-"}`;
-  const after=`${payType} / ${incomeType} / ${jobType||"-"}`;
+  const before=`${normalizeWorkerType(current.employmentType)||"-"} / ${current.payType||"-"} / ${current.incomeType||"-"} / ${current.jobType||"-"}`;
+  const after=`${workerType||"-"} / ${payType} / ${incomeType} / ${jobType||"-"}`;
 
   if(before===after){
     return msg("modalMsg","err","변경된 급여분류가 없습니다.");
@@ -441,6 +476,7 @@ async function correctPayrollClassification(){
       action:"correctPayrollClassification",
       month:$("month").value,
       employeeId:employeeId,
+      employmentType:workerType,
       payType:payType,
       incomeType:incomeType,
       jobType:jobType,
@@ -454,12 +490,12 @@ async function correctPayrollClassification(){
     msg("modalMsg","err",e.message);
   }finally{
     button.disabled=false;
-    button.textContent="급여분류·직무 정정";
+    button.textContent="근로구분·급여분류·직무 정정";
   }
 }
 
 async function save(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");const b=$("saveBtn");setButtonBusy(b,true,"저장 중...");try{const r=await post({action:"savePayroll",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),updatedBy:$("updatedBy").value});msg("modalMsg","ok",r.message);await load(true)}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
-async function confirmPay(){if(!confirm("저장된 급여를 최종 확정하시겠습니까?\n확정 후 급여금액은 수정할 수 없으며, 급여형태·소득구분·직무만 별도 정정할 수 있습니다."))return;const b=$("confirmBtn");setButtonBusy(b,true,"확정 중...");try{const r=await post({action:"confirmPayroll",month:$("month").value,employeeId:$("employeeId").value,updatedBy:$("updatedBy").value});await load(true);closeModal();msg("mainMsg","ok",r.message+" 확정 후 급여금액은 잠기며 급여형태·소득구분·직무만 정정할 수 있습니다.")}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
+async function confirmPay(){if(!confirm("저장된 급여를 최종 확정하시겠습니까?\n확정 후 급여금액은 수정할 수 없으며, 급여형태·소득구분·직무만 별도 정정할 수 있습니다."))return;const b=$("confirmBtn");setButtonBusy(b,true,"확정 중...");try{const r=await post({action:"confirmPayroll",month:$("month").value,employeeId:$("employeeId").value,updatedBy:$("updatedBy").value});await load(true);closeModal();msg("mainMsg","ok",r.message+" 확정 후 급여금액은 잠기며 근로구분·급여형태·소득구분·직무만 정정할 수 있습니다.")}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
 function buildSlip(){
   const e=employees.find(x=>x.employeeId===$("employeeId").value);
   const current=payrolls.find(x=>x.employeeId===$("employeeId").value);
