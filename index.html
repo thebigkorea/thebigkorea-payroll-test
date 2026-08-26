@@ -5,6 +5,13 @@
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f1eb;color:#25180f;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Arial,sans-serif}button,input,select,textarea{font:inherit}.head{background:linear-gradient(135deg,#3d2414,#74472b);color:#fff;padding:25px 18px}.head>div,.wrap{width:min(1400px,calc(100% - 28px));margin:auto}.head h1{margin:0;font-size:27px}.head p{margin:8px 0 0;opacity:.85}.wrap{padding:20px 0 40px}.card{background:#fff;border:1px solid #e2d6ca;border-radius:17px;padding:17px;margin-bottom:15px;box-shadow:0 6px 19px rgba(67,42,24,.07)}.login{max-width:500px;margin:40px auto;padding:27px}.login h2{margin-top:0}label{display:block;font-size:13px;font-weight:800;color:#59483b}input,select,textarea{width:100%;margin-top:6px;padding:10px 11px;border:1px solid #d7ccc1;border-radius:10px;background:#fff}.btn{border:0;border-radius:10px;padding:10px 14px;background:#4b2d1a;color:#fff;font-weight:800;cursor:pointer}.btn.blue{background:#2563eb}.btn.green{background:#15803d}.btn.gray{background:#70655d}.btn.small{padding:7px 10px;font-size:12px}.login .btn{width:100%;margin-top:14px}.toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap}.toolbar label{min-width:180px;flex:1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:15px}.stat{background:#fff;border:1px solid #e2d6ca;border-radius:14px;padding:15px}.stat span{display:block;color:#817267;font-size:12px}.stat strong{font-size:23px}.table-wrap{overflow:auto;border:1px solid #e2d6ca;border-radius:13px}table{width:100%;min-width:1050px;border-collapse:collapse}th,td{padding:11px 9px;border-bottom:1px solid #eee7df;text-align:center;font-size:13px;white-space:nowrap}th{background:#eee4da;position:sticky;top:0}.left{text-align:left}.badge{padding:4px 8px;border-radius:99px;font-weight:800}.wait{background:#fef3c7;color:#92400e}.saved{background:#dbeafe;color:#1e40af}.confirmed{background:#dcfce7;color:#166534}.modal{display:none;position:fixed;inset:0;background:rgba(20,12,8,.58);z-index:20;overflow:auto;padding:15px}.modal.open{display:block}.box{width:min(980px,100%);margin:20px auto;background:#fff;border-radius:18px;overflow:hidden}.mhead{display:flex;justify-content:space-between;align-items:center;padding:16px 19px;background:#f1e9e1}.mhead h2{margin:0}.close{border:0;background:none;font-size:28px}.summary{padding:13px 19px;background:#fffaf5;border-bottom:1px solid #e2d6ca}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:18px}.section{grid-column:1/-1;color:#4b2d1a;font-weight:900;border-bottom:1px solid #e2d6ca;padding:5px 0}.full{grid-column:1/-1}.totals{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.total{border-radius:12px;padding:13px;background:#f5f1eb}.total strong{display:block;font-size:21px;margin-top:4px}.actions{display:flex;justify-content:flex-end;gap:8px;padding:15px 18px;background:#faf8f6;border-top:1px solid #e2d6ca}.notice{display:none;margin-top:10px;padding:11px;border-radius:10px}.notice.show{display:block}.ok{background:#dcfce7;color:#166534}.err{background:#fee2e2;color:#991b1b}.hidden{display:none!important}
 .checkline{display:flex;align-items:center;gap:7px;margin-top:8px;padding:10px 11px;border:1px solid #d7ccc1;border-radius:10px;background:#fff}.checkline input{width:auto;margin:0}.help{grid-column:1/-1;padding:10px 12px;border-radius:10px;background:#fff7ed;color:#9a3412;font-size:12px}.slip{display:none}.slip h1{text-align:center}.slip table{width:100%;min-width:0;border-collapse:collapse;table-layout:fixed;border:1px solid #444}.slip td,.slip th{border:1px solid #444;padding:10px 8px;white-space:normal}.slip thead th,.slip tfoot th{background:#f1f1f1}.slip .sign{text-align:right;margin-top:25px;font-weight:800}.slip.image-export{display:block!important;position:fixed;left:-10000px;top:0;width:800px;padding:38px;background:#fff;color:#25180f;z-index:-1}
+.slip-work-calc{margin-top:24px}
+.slip-work-calc h2{margin:0 0 10px;font-size:18px;color:#3d2414}
+.slip-work-calc table{margin-top:0}
+.slip-work-calc th,.slip-work-calc td{font-size:12px;padding:9px 7px}
+.slip-work-calc tbody tr:last-child th{background:#f1f1f1;font-weight:900}
+.slip-work-formula{margin:9px 0 0;padding:9px 11px;background:#fff7ed;border:1px solid #eadfd4;border-radius:8px;font-size:11px;line-height:1.6;color:#6b4b35}
+
 .manage-buttons{display:flex;justify-content:center;gap:6px}.status-current{padding:10px 11px;margin-top:6px;border-radius:10px;background:#f5f1eb;font-weight:900}.status-date{display:none}.status-date.show{display:block}.version-tag{display:inline-block;margin-left:8px;padding:3px 7px;border-radius:99px;background:#dcfce7;color:#166534;font-size:11px;font-weight:900}.retirement-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;grid-column:1/-1}.retirement-summary .total{background:#fffaf5;border:1px solid #eadfd4}.retirement-history{grid-column:1/-1;overflow:auto}.retirement-history table{min-width:760px}.retirement-history th{position:static}.retirement-eligible{font-weight:900;color:#166534}.retirement-noteligible{font-weight:900;color:#991b1b}.history-table{grid-column:1/-1;overflow:auto}.history-table table{min-width:1100px}.history-table th{position:static}.history-money{width:130px;min-width:130px;text-align:right}.history-locked{background:#f1f5f9;color:#64748b}.history-empty{background:#fff}.history-name{position:sticky;left:0;background:#fff;z-index:2;font-weight:800}.history-table thead .history-name{background:#eee4da;z-index:3}.history-select-panel{grid-column:1/-1;display:none;border:1px solid #e2d6ca;border-radius:12px;background:#fffaf5;padding:13px}.history-select-panel.show{display:block}.history-select-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}.history-select-list{display:flex;gap:8px;flex-wrap:wrap}.history-person{display:flex;align-items:center;gap:7px;border:1px solid #d7ccc1;border-radius:10px;background:#fff;padding:8px 10px;cursor:pointer}.history-person input{width:auto;margin:0}.history-person small{color:#817267}.history-selection-count{font-weight:900;color:#166534}
 
 .retirement-slip{display:none}
@@ -68,7 +75,54 @@
 
 <div id="businessHistoryModal" class="modal" onclick="if(event.target===this)closeBusinessHistory()"><div class="box" style="width:min(1380px,100%)"><div class="mhead"><h2>과거 사업소득 일괄입력 <span class="version-tag">재직자 전용 · 세전금액</span></h2><button class="close" onclick="closeBusinessHistory()">×</button></div><div class="summary"><strong>현재 재직 중인 사업소득 대상자의 과거 세전 지급액을 월별로 입력합니다.</strong><div>4대보험은 0원, 소득세 3% + 지방소득세 0.3%를 자동 계산합니다. 기존 확정 급여는 잠겨 수정되지 않습니다.</div></div><div class="grid"><div class="section">입력 기간</div><label>시작월<input id="businessHistoryStart" type="month"></label><label>종료월<input id="businessHistoryEnd" type="month"></label><label>점포<select id="businessHistoryStore"><option value="">전체 점포</option></select></label><div class="full"><button class="btn" onclick="loadBusinessHistory()">대상 조회</button></div><div id="businessHistorySelectPanel" class="history-select-panel"><div class="history-select-actions"><strong>입력할 직원 선택</strong><button type="button" class="btn small" onclick="selectAllBusinessHistory(true)">전체 선택</button><button type="button" class="btn small gray" onclick="selectAllBusinessHistory(false)">전체 해제</button><span id="businessHistorySelectionCount" class="history-selection-count">0명 선택</span></div><div id="businessHistorySelectList" class="history-select-list"></div></div><div class="history-table"><table><thead id="businessHistoryHead"></thead><tbody id="businessHistoryBody"><tr><td>대상 조회를 눌러주세요.</td></tr></tbody></table></div><div class="help">입력값은 세전 지급액입니다. 빈 칸은 저장하지 않습니다. 이미 확정된 월은 자동으로 잠깁니다.</div></div><div id="businessHistoryMsg" class="notice" style="margin:0 18px 12px"></div><div class="actions"><button class="btn gray" onclick="closeBusinessHistory()">닫기</button><button id="businessHistorySaveBtn" class="btn green" onclick="saveBusinessHistory()">입력분 일괄 저장·확정</button></div></div></div>
 
-<section id="slip" class="slip"><h1>급여명세서</h1><p id="slipCompany">㈜더큰코리아</p><p><strong id="slipMonth"></strong> · <span id="slipName"></span></p><table><thead><tr><th>지급항목</th><th>금액</th><th>공제항목</th><th>금액</th></tr></thead><tbody id="slipBody"></tbody><tfoot><tr><th>지급합계</th><th id="slipGross"></th><th>공제합계</th><th id="slipDeduct"></th></tr><tr><th colspan="3">실지급액</th><th id="slipNet"></th></tr></tfoot></table><p class="sign">㈜더큰코리아</p></section>
+<section id="slip" class="slip">
+  <h1>급여명세서</h1>
+  <p id="slipCompany">㈜더큰코리아</p>
+  <p><strong id="slipMonth"></strong> · <span id="slipName"></span></p>
+  <table>
+    <thead><tr><th>지급항목</th><th>금액</th><th>공제항목</th><th>금액</th></tr></thead>
+    <tbody id="slipBody"></tbody>
+    <tfoot>
+      <tr><th>지급합계</th><th id="slipGross"></th><th>공제합계</th><th id="slipDeduct"></th></tr>
+      <tr><th colspan="3">실지급액</th><th id="slipNet"></th></tr>
+    </tfoot>
+  </table>
+
+  <div id="slipWorkCalcWrap" class="slip-work-calc">
+    <h2>추가근무수당 계산내역</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>구분</th>
+          <th>기준액</th>
+          <th>일수·시간</th>
+          <th>계산금액</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>미휴무</td>
+          <td id="slipCompLeaveRate">0원</td>
+          <td id="slipCompLeaveDays">0일</td>
+          <td id="slipCompLeaveAmount">0원</td>
+        </tr>
+        <tr>
+          <td>연장근로</td>
+          <td id="slipOvertimeRate">0원</td>
+          <td id="slipOvertimeHours">0시간</td>
+          <td id="slipOvertimeAmount">0원</td>
+        </tr>
+        <tr>
+          <th colspan="3">추가근무수당 합계</th>
+          <th id="slipExtraWorkTotal">0원</th>
+        </tr>
+      </tbody>
+    </table>
+    <p id="slipWorkCalcFormula" class="slip-work-formula"></p>
+  </div>
+
+  <p class="sign">㈜더큰코리아</p>
+</section>
 
 <section id="retirementSlip" class="retirement-slip">
   <div class="retirement-slip-header">
@@ -335,7 +389,91 @@ async function correctPayrollClassification(){
 
 async function save(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");try{const r=await post({action:"savePayroll",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),updatedBy:$("updatedBy").value});msg("modalMsg","ok",r.message);await load(true)}catch(e){msg("modalMsg","err",e.message)}}
 async function confirmPay(){if(!confirm("저장된 급여를 최종 확정하시겠습니까?\n확정 후 급여금액은 수정할 수 없으며, 급여형태·소득구분만 별도 정정할 수 있습니다."))return;try{const r=await post({action:"confirmPayroll",month:$("month").value,employeeId:$("employeeId").value,updatedBy:$("updatedBy").value});await load(true);closeModal();msg("mainMsg","ok",r.message+" 확정 후 급여금액은 잠기며 급여형태·소득구분만 정정할 수 있습니다.")}catch(e){msg("modalMsg","err",e.message)}}
-function buildSlip(){const e=employees.find(x=>x.employeeId===$("employeeId").value),labels={basePay:"기본급",overtimePay:"연장수당",jobAllowance:"직무수당",positionAllowance:"직책수당",extraWorkPay:"추가근무수당",compLeavePay:"미휴무수당",mealAllowance:"식대",vehicleAllowance:"차량유지비",otherPay:"기타지급",pension:"국민연금",health:"건강보험",longTermCare:"장기요양보험",employmentInsurance:"고용보험",incomeTax:"소득세",localIncomeTax:"지방소득세",otherDeduction:"기타공제"};const max=Math.max(earnIds.length,deductIds.length),rows=[];for(let i=0;i<max;i++)rows.push(`<tr><td>${labels[earnIds[i]]||"&nbsp;"}</td><td>${earnIds[i]?won(num(earnIds[i])):"&nbsp;"}</td><td>${labels[deductIds[i]]||"&nbsp;"}</td><td>${deductIds[i]?won(num(deductIds[i])):"&nbsp;"}</td></tr>`);const t=calc();$("slipMonth").textContent=$("month").value+" 급여";$("slipName").textContent=e.name+" / "+e.storeName;$("slipBody").innerHTML=rows.join("");$("slipGross").textContent=won(t.g);$("slipDeduct").textContent=won(t.d);$("slipNet").textContent=won(t.n);return e}
+function buildSlip(){
+  const e=employees.find(x=>x.employeeId===$("employeeId").value);
+  const current=payrolls.find(x=>x.employeeId===$("employeeId").value);
+
+  const labels={
+    basePay:"기본급",
+    overtimePay:"연장수당",
+    jobAllowance:"직무수당",
+    positionAllowance:"직책수당",
+    extraWorkPay:"추가근무수당",
+    compLeavePay:"미휴무수당",
+    mealAllowance:"식대",
+    vehicleAllowance:"차량유지비",
+    otherPay:"기타지급",
+    pension:"국민연금",
+    health:"건강보험",
+    longTermCare:"장기요양보험",
+    employmentInsurance:"고용보험",
+    incomeTax:"소득세",
+    localIncomeTax:"지방소득세",
+    otherDeduction:"기타공제"
+  };
+
+  const max=Math.max(earnIds.length,deductIds.length),rows=[];
+  for(let i=0;i<max;i++){
+    rows.push(
+      `<tr>
+        <td>${labels[earnIds[i]]||"&nbsp;"}</td>
+        <td>${earnIds[i]?won(num(earnIds[i])):"&nbsp;"}</td>
+        <td>${labels[deductIds[i]]||"&nbsp;"}</td>
+        <td>${deductIds[i]?won(num(deductIds[i])):"&nbsp;"}</td>
+      </tr>`
+    );
+  }
+
+  const t=calc();
+  $("slipMonth").textContent=$("month").value+" 급여";
+  $("slipName").textContent=e.name+" / "+e.storeName;
+  $("slipBody").innerHTML=rows.join("");
+  $("slipGross").textContent=won(t.g);
+  $("slipDeduct").textContent=won(t.d);
+  $("slipNet").textContent=won(t.n);
+
+  // 확정 급여는 급여원장 저장값을 우선 사용하고,
+  // 작성중 급여는 현재 입력값을 사용합니다.
+  const compRate=current?Number(current.compLeaveDailyRate||0):num("compLeaveDailyRate");
+  const compDays=current?Number(current.compLeaveDays||0):decimalValue("compLeaveDays");
+  const compAmount=current?Number(current.calculatedCompLeavePay||0):Math.round(compRate*compDays);
+
+  const overtimeRate=current?Number(current.overtimeHourlyRate||0):num("overtimeHourlyRate");
+  const overtimeHours=current?Number(current.overtimeHours||0):decimalValue("overtimeHours");
+  const overtimeAmount=current?Number(current.calculatedOvertimePay||0):Math.round(overtimeRate*overtimeHours);
+
+  const extraTotal=compAmount+overtimeAmount;
+
+  $("slipCompLeaveRate").textContent=won(compRate);
+  $("slipCompLeaveDays").textContent=Number(compDays||0).toLocaleString("ko-KR")+"일";
+  $("slipCompLeaveAmount").textContent=won(compAmount);
+
+  $("slipOvertimeRate").textContent=won(overtimeRate);
+  $("slipOvertimeHours").textContent=Number(overtimeHours||0).toLocaleString("ko-KR")+"시간";
+  $("slipOvertimeAmount").textContent=won(overtimeAmount);
+
+  $("slipExtraWorkTotal").textContent=won(extraTotal);
+
+  const formulaParts=[];
+  if(compDays>0 || compAmount>0){
+    formulaParts.push(
+      `미휴무 ${Number(compDays).toLocaleString("ko-KR")}일 × ${won(compRate)} = ${won(compAmount)}`
+    );
+  }
+  if(overtimeHours>0 || overtimeAmount>0){
+    formulaParts.push(
+      `연장근로 ${Number(overtimeHours).toLocaleString("ko-KR")}시간 × ${won(overtimeRate)} = ${won(overtimeAmount)}`
+    );
+  }
+
+  $("slipWorkCalcFormula").textContent=formulaParts.length
+    ? formulaParts.join(" + ")+" → 추가근무수당 "+won(extraTotal)
+    : "등록된 미휴무·연장근로 계산내역이 없습니다.";
+
+  $("slipWorkCalcWrap").style.display=(compDays>0||overtimeHours>0||extraTotal>0)?"block":"none";
+
+  return e;
+}
 function previewSlip(){buildSlip();window.print()}
 async function makeKakaoImage(){clear("modalMsg");if(typeof html2canvas!=="function")return msg("modalMsg","err","이미지 기능을 불러오지 못했습니다. 새로고침 후 다시 시도하세요.");if(!navigator.clipboard||!window.ClipboardItem)return msg("modalMsg","err","이 브라우저에서는 이미지 복사를 사용할 수 없습니다.");buildSlip();const slip=$("slip");slip.classList.add("image-export");try{const canvas=await html2canvas(slip,{backgroundColor:"#ffffff",scale:2,useCORS:true,logging:false});const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/png"));if(!blob)throw new Error("이미지를 만들지 못했습니다.");await navigator.clipboard.write([new ClipboardItem({"image/png":blob})]);msg("modalMsg","ok","카톡용 이미지를 복사했습니다. 카카오톡 대화창에서 Ctrl + V를 누르세요.")}catch(error){msg("modalMsg","err","이미지를 복사하지 못했습니다. 브라우저의 클립보드 권한을 확인하세요.")}finally{slip.classList.remove("image-export")}}
 
