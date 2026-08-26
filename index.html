@@ -31,6 +31,11 @@
 .retirement-slip td:last-child{text-align:right;font-weight:800}
 .retirement-slip-note{margin-top:20px;padding:12px;background:#f8fafc;color:#64748b;border-radius:8px;font-size:12px;text-align:center}
 .retirement-slip-company{margin-top:25px;text-align:right;font-weight:900;font-size:16px}
+.retirement-slip-formula{margin:0 0 18px;padding:10px 12px;border:1px solid #e2d6ca;background:#fffaf5;border-radius:9px;text-align:center;font-size:13px;font-weight:800}
+.retirement-slip-monthly th:nth-child(1),.retirement-slip-monthly td:nth-child(1){width:48px}
+.retirement-slip-monthly tfoot th{background:#f7eee6;font-weight:900}
+.retirement-slip-caption{margin-top:8px;color:#70655d;font-size:11px}
+
 @media(max-width:760px){.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.section,.full{grid-column:1}.totals{grid-template-columns:1fr}.head>div,.wrap{width:calc(100% - 18px)}}
 @media print{html,body{height:auto!important;overflow:visible!important;background:#fff!important}.head,.wrap,.modal{display:none!important}.slip{display:block!important;position:static!important;inset:auto!important;width:100%!important;margin:0!important;padding:25px!important;background:#fff!important}.slip,.slip *{visibility:visible!important}.slip table{width:100%;border-collapse:collapse!important;table-layout:fixed;border:1px solid #444!important}.slip thead,.slip tbody,.slip tfoot,.slip tr{break-inside:avoid}.slip th,.slip td{border:1px solid #444!important;padding:10px 8px!important;white-space:normal!important}.slip thead th,.slip tfoot th{background:#f1f1f1!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.slip tfoot th{font-weight:900}}
 </style></head><body>
@@ -78,19 +83,27 @@
     <div><span>적립 시작일</span><strong id="retirementSlipStartDate">-</strong></div>
     <div><span>근속기간</span><strong id="retirementSlipService">-</strong></div>
     <div><span>관리방식</span><strong id="retirementSlipMethod">-</strong></div>
-    <div><span>확정 월수</span><strong id="retirementSlipMonths">0개월</strong></div>
+    <div><span>확정 월수 (사업소득 월수)</span><strong id="retirementSlipMonths">0개월</strong></div>
   </div>
   <div class="retirement-slip-money">
-    <div><span>누적 적립액</span><strong id="retirementSlipAccumulated">0원</strong></div>
-    <div><span>지급액</span><strong id="retirementSlipPaid">0원</strong></div>
-    <div class="balance"><span>현재 적립 잔액</span><strong id="retirementSlipBalance">0원</strong></div>
+    <div><span>누적 사업소득 지급액</span><strong id="retirementSlipBusinessGross">0원</strong></div>
+    <div><span>누적 적립액 (급여÷12)</span><strong id="retirementSlipAccumulated">0원</strong></div>
+    <div class="balance"><span>실 지급 예상액 (3.3% 공제 후)</span><strong id="retirementSlipExpectedPay">0원</strong></div>
   </div>
-  <h3>적립 · 지급 내역</h3>
+  <div class="retirement-slip-formula" id="retirementSlipFormula"></div>
+  <h3>1. 사업소득 월별 내역</h3>
+  <table class="retirement-slip-monthly">
+    <thead><tr><th>No.</th><th>대상월</th><th>실제 사업소득 지급액</th><th>월 적립액 (지급액÷12)</th><th>누적 적립액</th></tr></thead>
+    <tbody id="retirementSlipMonthlyBody"></tbody>
+    <tfoot id="retirementSlipMonthlyFoot"></tfoot>
+  </table>
+  <div class="retirement-slip-caption">※ 월 적립액은 해당 월의 실제 확정 사업소득 지급액을 12로 나누어 원 단위 반올림합니다.</div>
+  <h3>2. 적립 · 지급 내역</h3>
   <table>
     <thead><tr><th>처리일</th><th>구분</th><th>대상월</th><th>금액</th></tr></thead>
     <tbody id="retirementSlipHistory"></tbody>
   </table>
-  <div class="retirement-slip-note">본 자료는 당사 퇴직급여 관리자료를 기준으로 작성되었습니다.</div>
+  <div class="retirement-slip-note">본 자료는 당사 퇴직급여 관리자료를 기준으로 작성되었습니다.<br>※ 사업소득 계약적립금의 실 지급 예상액은 누적 적립액 전체에 사업소득세 3.3%를 적용한 예상 금액입니다.</div>
   <div class="retirement-slip-company">㈜더큰코리아</div>
 </section>
 
@@ -197,17 +210,52 @@ function buildRetirementSlip(){
   const employeeId=$("retirementEmployeeId").value;
   const row=retirementRows.find(x=>String(x.employeeId)===String(employeeId));
   if(!row)throw new Error("퇴직급여 자료를 찾을 수 없습니다.");
+
+  const monthly=(Array.isArray(row.businessIncomeMonths)?row.businessIncomeMonths:[])
+    .slice()
+    .sort((a,b)=>String(a.month||"").localeCompare(String(b.month||"")));
+
+  let running=0;
+  const normalized=monthly.map((item,index)=>{
+    const gross=Math.max(0,Number(item.grossPay||0));
+    const monthlyAccrued=Math.round(gross/12);
+    running+=monthlyAccrued;
+    return {no:index+1,month:item.month||"-",grossPay:gross,monthlyAccrued:monthlyAccrued,runningAccrued:running};
+  });
+
+  const totalBusinessGross=normalized.reduce((sum,item)=>sum+item.grossPay,0);
+  const calculatedAccrued=normalized.reduce((sum,item)=>sum+item.monthlyAccrued,0);
+  const accumulated=Number(row.accumulated||calculatedAccrued||0);
+  const businessTax=row.method==="사업소득 계약적립금"?Math.round(accumulated*0.033):0;
+  const expectedPay=Math.max(0,accumulated-businessTax);
+
   $("retirementSlipName").textContent=row.name||"-";
   $("retirementSlipInfo").textContent=[row.storeName,row.position,row.status].filter(Boolean).join(" · ");
   $("retirementSlipStartDate").textContent=row.startDate||"-";
   $("retirementSlipService").textContent=row.serviceText||"-";
   $("retirementSlipMethod").textContent=row.method||"-";
-  $("retirementSlipMonths").textContent=Number(row.confirmedMonths||0)+"개월";
-  $("retirementSlipAccumulated").textContent=won(row.accumulated||0);
-  $("retirementSlipPaid").textContent=won(row.paid||0);
-  $("retirementSlipBalance").textContent=won(row.balance||0);
-  const history=retirementTransactions.filter(x=>String(x.employeeId)===String(employeeId)).sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
-  $("retirementSlipHistory").innerHTML=history.length?history.map(x=>`<tr><td>${x.date||"-"}</td><td>${x.type||"-"}</td><td>${x.month||"-"}</td><td>${won(x.amount||0)}</td></tr>`).join(""):'<tr><td colspan="4">등록된 처리내역이 없습니다.</td></tr>';
+  $("retirementSlipMonths").textContent=Number(row.confirmedMonths||normalized.length||0)+"개월";
+  $("retirementSlipBusinessGross").textContent=won(totalBusinessGross);
+  $("retirementSlipAccumulated").textContent=won(accumulated);
+  $("retirementSlipExpectedPay").textContent=won(expectedPay);
+  $("retirementSlipFormula").textContent=row.method==="사업소득 계약적립금"
+    ? `실 지급 예상액 = 누적 적립액 ${won(accumulated)} - 사업소득세(3.3%) ${won(businessTax)} = ${won(expectedPay)}`
+    : `현재 누적 적립액 ${won(accumulated)}`;
+
+  $("retirementSlipMonthlyBody").innerHTML=normalized.length
+    ? normalized.map(item=>`<tr><td>${item.no}</td><td>${item.month}</td><td>${won(item.grossPay)}</td><td>${won(item.monthlyAccrued)}</td><td>${won(item.runningAccrued)}</td></tr>`).join("")
+    : '<tr><td colspan="5">확정된 사업소득 급여내역이 없습니다.</td></tr>';
+
+  $("retirementSlipMonthlyFoot").innerHTML=normalized.length
+    ? `<tr><th colspan="2">합계</th><th>${won(totalBusinessGross)}</th><th>${won(calculatedAccrued)}</th><th>${won(calculatedAccrued)}</th></tr>`
+    : "";
+
+  const history=retirementTransactions
+    .filter(x=>String(x.employeeId)===String(employeeId))
+    .sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
+  $("retirementSlipHistory").innerHTML=history.length
+    ? history.map(x=>`<tr><td>${x.date||"-"}</td><td>${x.type||"-"}</td><td>${x.month||"-"}</td><td>${won(x.amount||0)}</td></tr>`).join("")
+    : '<tr><td colspan="4">등록된 처리내역이 없습니다.</td></tr>';
   return row;
 }
 
