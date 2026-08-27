@@ -381,7 +381,13 @@ async function openPay(id){
   calculateWorkAllowance(Boolean(current&&p.extraWorkPay&&!p.compLeaveDailyRate&&!p.overtimeHourlyRate));
 
   $("payType").value=p.payType||e.payType||"월급제";
-  $("incomeType").value=p.incomeType||((e.employmentType||"").includes("사업")?"사업소득":"근로소득");$("workerType").value=normalizeWorkerType(p.employmentType||e.employmentType||"");$("jobType").value=p.jobType||e.position||e.department||"";
+  $("incomeType").value =
+  p.incomeType ||
+  e.incomeType ||
+  ((e.employmentType || "").includes("사업")
+    ? "사업소득"
+    : "근로소득");
+    $("workerType").value=normalizeWorkerType(p.employmentType||e.employmentType||"");$("jobType").value=p.jobType||e.position||e.department||"";
   $("updatedBy").value=p.updatedBy||"급여담당자";
   $("note").value=current?.note||"";
   $("modal").classList.add("open");
@@ -394,11 +400,29 @@ async function openPay(id){
     // 현재 월에 이미 저장된 급여자료가 있으면 급여원장 값을 최우선으로 사용합니다.
     // 보험·세금 설정의 incomeType이 과거 값이어도 현재 월 급여분류를 덮어쓰지 않습니다.
     if(current){
-      $("payType").value=current.payType||e.payType||"월급제";
-      $("incomeType").value=current.incomeType||"근로소득";
-      $("workerType").value=normalizeWorkerType(current.employmentType||e.employmentType||"");
-      $("jobType").value=current.jobType||e.position||e.department||"";
-    }
+  $("payType").value =
+    current.payType ||
+    e.payType ||
+    "월급제";
+
+  $("incomeType").value =
+    current.incomeType ||
+    e.incomeType ||
+    "근로소득";
+
+  $("workerType").value =
+    normalizeWorkerType(
+      current.employmentType ||
+      e.employmentType ||
+      ""
+    );
+
+  $("jobType").value =
+    current.jobType ||
+    e.position ||
+    e.department ||
+    "";
+}
   }catch(error){
     payrollSetting=null;
     msg("modalMsg","err",error.message);
