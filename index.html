@@ -71,7 +71,7 @@
 </section>
 <section id="app" class="hidden">
 <div class="stats"><div class="stat"><span>대상 직원</span><strong id="cnt">0명</strong></div><div class="stat"><span>저장 완료</span><strong id="savedCnt">0명</strong></div><div class="stat"><span>확정</span><strong id="confirmedCnt">0명</strong></div><div class="stat"><span>실지급 합계</span><strong id="netSum">0원</strong></div></div>
-<section class="card"><div class="toolbar"><label>급여월<input id="month" type="month"></label><label>점포<select id="store" onchange="render()"><option value="">전체 점포</option></select></label><label>직원 검색<input id="keyword" type="search" oninput="render()" placeholder="이름·직무"></label><button class="btn" onclick="load()">조회</button><button class="btn green" onclick="openMissingEmployeeRegistration()">누락 직원 등록</button><button class="btn blue" onclick="openBusinessHistory()">과거 사업소득 일괄입력</button></div><div id="mainMsg" class="notice"></div></section>
+<section class="card"><div class="toolbar"><label>급여월<input id="month" type="month"></label><label>점포<select id="store" onchange="render()"><option value="">전체 점포</option></select></label><label>직원 검색<input id="keyword" type="search" oninput="render()" placeholder="이름·직무"></label><button class="btn" onclick="load()">조회</button><button class="btn green" onclick="openMissingEmployeeRegistration()">누락 직원 등록</button><button class="btn blue" onclick="openBusinessHistory()">과거 사업소득 일괄입력</button><button class="btn gray" onclick="exportConfirmedTaxWorkbook()">세무자료 엑셀 다운로드</button></div><div id="mainMsg" class="notice"></div></section>
 <section class="card"><div class="payroll-sheet-toolbar"><p>금액을 여러 직원에게 바로 입력한 뒤 <strong>변경분 일괄 저장</strong>을 누르세요. 상세 설정은 오른쪽 조회·수정에서 처리합니다.</p><button id="bulkSaveBtn" class="btn blue" onclick="saveDirtyPayrollRows()">변경분 일괄 저장</button></div><div class="payroll-sheet"><table><thead><tr><th class="sheet-store">점포</th><th class="sheet-name">직원</th><th>근로구분</th><th>직무</th><th>급여형태</th><th>소득구분</th><th class="sheet-group-earn">기본급</th><th class="sheet-group-earn">연장수당</th><th class="sheet-group-earn">직무수당</th><th class="sheet-group-earn">직책수당</th><th class="sheet-group-earn">추가근무수당</th><th class="sheet-group-earn">식대</th><th class="sheet-group-earn">차량유지비</th><th class="sheet-group-earn">기타지급</th><th class="sheet-group-total">지급합계</th><th class="sheet-group-deduct">국민연금</th><th class="sheet-group-deduct">건강보험</th><th class="sheet-group-deduct">장기요양</th><th class="sheet-group-deduct">고용보험</th><th class="sheet-group-deduct">소득세</th><th class="sheet-group-deduct">지방소득세</th><th class="sheet-group-deduct">기타공제</th><th class="sheet-group-total">공제합계</th><th class="sheet-group-total">실지급액</th><th>상태</th><th class="sheet-actions">상세 관리 <span class="version-tag">오른쪽 고정</span></th></tr></thead><tbody id="body"><tr><td colspan="26">급여월을 선택하고 조회하세요.</td></tr></tbody></table></div></section>
 </section></main>
 
@@ -182,6 +182,7 @@
 </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 const API_URL="https://script.google.com/macros/s/AKfycbx8whuAGHuhAg3fhffsZSIJQI7m2RDXN4s9Mm44cF27KjSIFYMelqgYpVMbeQuTBv8/exec";let pin="",employees=[],payrolls=[],previousPayrolls=[],payStandards=[],previousMonth="",payrollSetting=null,employmentStatusRows=[],storeOptions=[],currentPayrollLocked=false,koreaHouseLinkedPayroll={},canConfirmMonth=false,currentPayrollMonth="";const earnIds=["basePay","overtimePay","jobAllowance","positionAllowance","extraWorkPay","mealAllowance","vehicleAllowance","otherPay"],deductIds=["pension","health","longTermCare","employmentInsurance","incomeTax","localIncomeTax","otherDeduction"];
 const $=id=>document.getElementById(id),won=v=>Number(v||0).toLocaleString("ko-KR")+"원",num = id => {
@@ -331,6 +332,41 @@ function editPayrollSheetMoney(input){formatMoneyInput(input);markPayrollRowDirt
 function markPayrollRowDirty(employeeId){const row=document.querySelector(`tr[data-payroll-row="${employeeId}"]`);if(!row||row.classList.contains('row-locked'))return;dirtyPayrollRows.add(String(employeeId));row.classList.add('row-dirty');const state=row.querySelector('.sheet-save-state');if(state)state.textContent='저장 필요';recalcPayrollSheetRow(employeeId)}
 async function savePayrollSheetRow(employeeId,silent=false){const row=document.querySelector(`tr[data-payroll-row="${employeeId}"]`);if(!row||row.classList.contains('row-locked'))return true;const b=row.querySelector('.sheet-row-save');if(b)setButtonBusy(b,true,'저장 중');try{const r=await post({action:'savePayroll',month:$("month").value,employeeId:String(employeeId),payroll:payrollSheetRowData(employeeId),updatedBy:'급여담당자'});dirtyPayrollRows.delete(String(employeeId));row.classList.remove('row-dirty');const state=row.querySelector('.sheet-save-state');if(state)state.textContent='저장됨';if(!silent)msg('mainMsg','ok',r.message||'급여를 저장했습니다.');return true}catch(e){msg('mainMsg','err',e.message);return false}finally{if(b)setButtonBusy(b,false)}}
 async function saveDirtyPayrollRows(){const ids=[...dirtyPayrollRows];if(!ids.length)return msg('mainMsg','err','변경된 급여가 없습니다.');const b=$("bulkSaveBtn");setButtonBusy(b,true,`0/${ids.length} 저장 중`);let success=0;for(let i=0;i<ids.length;i++){b.textContent=`${i+1}/${ids.length} 저장 중`;if(await savePayrollSheetRow(ids[i],true))success++}setButtonBusy(b,false);await load();msg('mainMsg',success===ids.length?'ok':'err',`${ids.length}명 중 ${success}명의 급여를 저장했습니다.`)}
+function taxEmployeeValue(employee,keys){for(const key of keys){if(employee&&employee[key]!==undefined&&employee[key]!==null&&String(employee[key]).trim()!=="")return employee[key]}return ""}
+function taxText(value){const text=String(value??"");return /^[=+\-@]/.test(text)?"'"+text:text}
+function taxAmount(payroll,key){return Number(payroll&&payroll[key]||0)}
+function taxWorkbookRows(rows,type){
+  const commonHeaders=["점포","구분","성명","주민등록번호","입사일","기본급","연장수당","직무수당","직책수당","추가근무수당","식대","차량유지비","기타지급","지급합계"];
+  const regularHeaders=[...commonHeaders,"국민연금","건강보험","장기요양보험","고용보험","소득세","지방소득세","기타공제","공제합계","실지급액"];
+  const businessHeaders=["점포","구분","성명","주민등록번호","입사일","지급총액","사업소득세(3%)","지방소득세(0.3%)","기타공제","공제합계","실지급액"];
+  const headers=type==="business"?businessHeaders:regularHeaders;
+  const data=rows.map(({p,e})=>{
+    const resident=taxText(taxEmployeeValue(e,["residentNumber","residentRegistrationNumber","rrn","residentNo"]));
+    const hireDate=taxText(taxEmployeeValue(e,["hireDate","joinDate","employmentDate"]));
+    if(type==="business")return [taxText(e.storeName||p.storeName||""),"사업소득",taxText(e.name||p.name||""),resident,hireDate,taxAmount(p,"grossPay"),taxAmount(p,"incomeTax"),taxAmount(p,"localIncomeTax"),taxAmount(p,"otherDeduction"),taxAmount(p,"totalDeduction"),taxAmount(p,"netPay")];
+    return [taxText(e.storeName||p.storeName||""),"근로소득",taxText(e.name||p.name||""),resident,hireDate,taxAmount(p,"basePay"),taxAmount(p,"overtimePay"),taxAmount(p,"jobAllowance"),taxAmount(p,"positionAllowance"),taxAmount(p,"extraWorkPay"),taxAmount(p,"mealAllowance"),taxAmount(p,"vehicleAllowance"),taxAmount(p,"otherPay"),taxAmount(p,"grossPay"),taxAmount(p,"pension"),taxAmount(p,"health"),taxAmount(p,"longTermCare"),taxAmount(p,"employmentInsurance"),taxAmount(p,"incomeTax"),taxAmount(p,"localIncomeTax"),taxAmount(p,"otherDeduction"),taxAmount(p,"totalDeduction"),taxAmount(p,"netPay")];
+  });
+  const total=new Array(headers.length).fill("");total[2]="합계";for(let c=5;c<headers.length;c++)total[c]=data.reduce((sum,row)=>sum+Number(row[c]||0),0);
+  return {headers,data,total};
+}
+function appendTaxSheet(workbook,name,title,rows,type){
+  const built=taxWorkbookRows(rows,type),aoa=[[title],[],built.headers,...built.data,built.total],ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws["!merges"]=[{s:{r:0,c:0},e:{r:0,c:built.headers.length-1}}];
+  ws["!cols"]=built.headers.map((header,index)=>({wch:index===0?24:index===2?12:index===3?18:index===4?12:header.length+5}));
+  ws["!autofilter"]={ref:XLSX.utils.encode_range({s:{r:2,c:0},e:{r:2+built.data.length,c:built.headers.length-1}})};
+  for(let r=3;r<4+built.data.length;r++)for(let c=5;c<built.headers.length;c++){const cell=ws[XLSX.utils.encode_cell({r,c})];if(cell)cell.z="#,#0"}
+  XLSX.utils.book_append_sheet(workbook,ws,name);
+}
+function exportConfirmedTaxWorkbook(){
+  clear("mainMsg");if(typeof XLSX==="undefined")return msg("mainMsg","err","엑셀 기능을 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 새로고침하세요.");
+  const month=$("month").value,storeId=$("store").value,confirmed=payrolls.filter(p=>p.status==="확정").map(p=>({p,e:employees.find(e=>String(e.employeeId)===String(p.employeeId))||{}})).filter(x=>!storeId||String(x.e.storeId)===String(storeId));
+  if(!confirmed.length)return msg("mainMsg","err","선택한 급여월·점포에 확정된 급여가 없습니다. 급여 확정 후 내려받을 수 있습니다.");
+  const regular=confirmed.filter(x=>String(x.p.incomeType||x.e.incomeType||"")!=="사업소득"),business=confirmed.filter(x=>String(x.p.incomeType||x.e.incomeType||"")==="사업소득"),storeName=storeId?($("store").selectedOptions[0]?.textContent||"선택점포"):"전체점포",monthText=month?month.replace("-","년 ")+"월":"선택월",wb=XLSX.utils.book_new();
+  appendTaxSheet(wb,"근로소득자",`${monthText} ${storeName} 근로소득 급여자료`,regular,"regular");appendTaxSheet(wb,"사업소득자",`${monthText} ${storeName} 사업소득 급여자료`,business,"business");
+  wb.Props={Title:`${monthText} 급여 세무자료`,Subject:"확정 급여 세무회계 송부자료",Author:"주식회사 더큰코리아",Company:"주식회사 더큰코리아"};
+  XLSX.writeFile(wb,`${month||"급여월"}_${storeName.replace(/[\\/:*?\"<>|]/g,"")}_세무급여자료.xlsx`);
+  const missing=confirmed.filter(x=>!taxEmployeeValue(x.e,["residentNumber","residentRegistrationNumber","rrn","residentNo"])).length;msg("mainMsg","ok",`확정 급여 ${confirmed.length}명(근로소득 ${regular.length}명 · 사업소득 ${business.length}명)의 세무자료를 내려받았습니다.${missing?` 주민등록번호 미표시 ${missing}명은 통합 인사정보를 확인하세요.`:""}`)
+}
 function render(){
   const s=$("store").value,k=$("keyword").value.toLowerCase(),map=Object.fromEntries(payrolls.map(p=>[p.employeeId,p])),workerTypeOrder={"정직원":1,"아르바이트":2,"일용직":3,"외국인":4},payTypeOrder={"월급제":1,"시급제":2,"일급제":3};
   dirtyPayrollRows.clear();
