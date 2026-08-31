@@ -85,7 +85,7 @@
     <strong id="confirmedCnt">0명</strong>
   </div>
   <div class="stat net-stat">
-    <span>실지급 합계</span>
+    <span>세전 지급합계</span>
     <strong id="netSum">0원</strong>
   </div>
 </div>
@@ -94,25 +94,25 @@
   <div class="income-stat">
     <span>정규직 근로소득</span>
     <strong id="netRegular">0원</strong>
-    <small>정규직 급여 실지급액</small>
+    <small>세전 지급합계 기준</small>
   </div>
 
   <div class="income-stat">
     <span>아르바이트</span>
     <strong id="netPartTime">0원</strong>
-    <small>시급제 · 사업소득세 적용</small>
+    <small>세전 지급합계 기준</small>
   </div>
 
   <div class="income-stat">
     <span>사업소득</span>
     <strong id="netBusiness">0원</strong>
-    <small>월급제 · 일급제 사업소득</small>
+    <small>세전 지급합계 기준</small>
   </div>
 
   <div class="income-stat">
     <span>일용근로소득</span>
     <strong id="netDaily">0원</strong>
-    <small>지급완료 기준</small>
+    <small>세전 지급액 · 지급완료 기준</small>
   </div>
 </div>
 <section class="card"><div class="toolbar"><label>급여월<input id="month" type="month"></label><label>점포<select id="store" onchange="render()"><option value="">전체 점포</option></select></label><label>직원 검색<input id="keyword" type="search" oninput="render()" placeholder="이름·직무"></label><button class="btn" onclick="load()">조회</button><button class="btn green" onclick="openMissingEmployeeRegistration()">누락 직원 등록</button><button class="btn blue" onclick="openBusinessHistory()">과거 사업소득 일괄입력</button><button class="btn gray" onclick="exportConfirmedTaxWorkbook()">세무자료 엑셀 다운로드</button></div><div id="mainMsg" class="notice"></div></section>
@@ -447,9 +447,9 @@ function render(){
   $("body").innerHTML=list.length?list.map(e=>{const p=map[e.employeeId],standard=payStandards.find(x=>x.employeeId===e.employeeId)||{},link=linkedPayrollFor(e.employeeId),locked=p?.status==="확정",payType=p?.payType||e.payType||'월급제',classification=derivePayrollClassification(e,p,payType),linkedActive=Boolean(link&&!locked&&!isRegularEmployee(e,p)),st=locked?"확정":linkedActive?"연동중":p?"작성중":"미작성",cls=locked?"confirmed":linkedActive?"linked-pay":p?"saved":"wait",value=f=>f==='basePay'&&linkedActive?Number(link.amount||0):sheetValue(p,standard,f),gross=sheetEarnFields.reduce((a,f)=>a+value(f),0),deduct=sheetDeductFields.reduce((a,f)=>a+value(f),0),worker=classification.workerType,incomeType=classification.incomeType,saveEnabled=!locked&&linkedActive;return `<tr data-payroll-row="${e.employeeId}" class="${locked?'row-locked':''}"><td class="sheet-store">${e.storeName}</td><td class="sheet-name"><button type="button" class="employee-name-button" onclick="openPay('${e.employeeId}')" title="급여 상세 조회·수정">${e.name}</button></td><td>${sheetSelect('employmentType',e.employeeId,worker,['','정직원','아르바이트','사업소득자'],locked)}</td><td>${sheetSelect('jobType',e.employeeId,p?.jobType||e.position||e.department||'', ['', '홀서빙','주방조리','홀퇴식','설거지','총괄'],locked,'sheet-job')}</td><td>${sheetSelect('payType',e.employeeId,payType,['월급제','시급제','일급제'],locked)}</td><td>${sheetSelect('incomeType',e.employeeId,incomeType,['근로소득','사업소득'],true)}</td>${sheetEarnFields.map(f=>`<td>${sheetMoney(f,e.employeeId,value(f),locked,f==='basePay'&&linkedActive)}</td>`).join('')}<td class="sheet-total" data-total="gross">${won(gross)}</td>${sheetDeductFields.map(f=>`<td>${sheetMoney(f,e.employeeId,value(f),locked,false)}</td>`).join('')}<td class="sheet-total" data-total="deduct">${won(deduct)}</td><td class="sheet-total" data-total="net">${won(gross-deduct)}</td><td><span class="badge ${cls}">${st}</span><span class="sheet-save-state"></span></td><td class="sheet-actions"><div class="compact-actions">${locked?'':`<button class="sheet-row-save" onclick="savePayrollSheetRow('${e.employeeId}')" ${saveEnabled?'':'disabled'}>저장</button>`}<details class="manage-menu"><summary>관리 ▾</summary><div class="manage-menu-popover"><button type="button" onclick="this.closest('details').removeAttribute('open');openEmploymentStatusFor('${e.employeeId}')">인사상태 변경</button><button type="button" onclick="this.closest('details').removeAttribute('open');openRetirementFor('${e.employeeId}')">퇴직급여 관리</button></div></details></div></td></tr>`}).join(""):'<tr><td colspan="26">직원이 없습니다.</td></tr>';
   list.forEach(e=>applyBusinessTaxRules(e.employeeId,true));
   const visibleIds=new Set(list.map(e=>String(e.employeeId))),visiblePayrolls=payrolls.filter(p=>visibleIds.has(String(p.employeeId))),saved=visiblePayrolls.length,confirmed=visiblePayrolls.filter(p=>p.status==="확정").length,category={regular:0,partTime:0,business:0,daily:0};
-  /* 저장된 급여와 아르바이트 포털 연동금액을 화면 표시값 기준으로 합산합니다. */
-  list.forEach(e=>{const p=map[e.employeeId],link=linkedPayrollFor(e.employeeId);if(!p&&!link)return;const rowData=payrollSheetRowData(e.employeeId);if(!rowData)return;const gross=sheetEarnFields.reduce((sum,field)=>sum+Number(rowData[field]||0),0),deduct=sheetDeductFields.reduce((sum,field)=>sum+Number(rowData[field]||0),0),net=Math.max(0,gross-deduct),classification=derivePayrollClassification(e,p||{},rowData.payType||e.payType);if(classification.workerType==="정직원")category.regular+=net;else if(classification.workerType==="아르바이트")category.partTime+=net;else category.business+=net});
-  const scopeName=s?($("store").selectedOptions[0]?.textContent||"선택 점포"):"전체 점포",dailyPaid=paidDailyWorkerTotal(s?scopeName:""),dashboardNet=category.regular+category.partTime+category.business+dailyPaid;category.daily=dailyPaid;$("dashboardScope").textContent=scopeName+" · 대상 직원";$("cnt").textContent=list.length+"명";$("savedCnt").textContent=saved+"명";$("confirmedCnt").textContent=confirmed+"명";$("netSum").textContent=won(dashboardNet);$("netRegular").textContent=won(category.regular);$("netPartTime").textContent=won(category.partTime);$("netBusiness").textContent=won(category.business);$("netDaily").textContent=dailyWorkerSummaryError?"조회 실패":won(category.daily);if(dailyWorkerSummaryError)msg("mainMsg","err","급여자료는 조회했지만 일용직 지급완료 금액을 불러오지 못했습니다: "+dailyWorkerSummaryError)}
+  /* 대시보드 분류별 금액은 공제 전 세전 지급합계(gross)를 기준으로 합산합니다. */
+  list.forEach(e=>{const p=map[e.employeeId],link=linkedPayrollFor(e.employeeId);if(!p&&!link)return;const rowData=payrollSheetRowData(e.employeeId);if(!rowData)return;const gross=sheetEarnFields.reduce((sum,field)=>sum+Number(rowData[field]||0),0),classification=derivePayrollClassification(e,p||{},rowData.payType||e.payType);if(classification.workerType==="정직원")category.regular+=gross;else if(classification.workerType==="아르바이트")category.partTime+=gross;else category.business+=gross});
+  const scopeName=s?($("store").selectedOptions[0]?.textContent||"선택 점포"):"전체 점포",dailyPaid=paidDailyWorkerTotal(s?scopeName:""),dashboardGross=category.regular+category.partTime+category.business+dailyPaid;category.daily=dailyPaid;$("dashboardScope").textContent=scopeName+" · 대상 직원";$("cnt").textContent=list.length+"명";$("savedCnt").textContent=saved+"명";$("confirmedCnt").textContent=confirmed+"명";$("netSum").textContent=won(dashboardGross);$("netRegular").textContent=won(category.regular);$("netPartTime").textContent=won(category.partTime);$("netBusiness").textContent=won(category.business);$("netDaily").textContent=dailyWorkerSummaryError?"조회 실패":won(category.daily);if(dailyWorkerSummaryError)msg("mainMsg","err","급여자료는 조회했지만 일용직 지급완료 금액을 불러오지 못했습니다: "+dailyWorkerSummaryError)}
 async function openPay(id){
   clear("modalMsg");
   const e=employees.find(x=>x.employeeId===id),
