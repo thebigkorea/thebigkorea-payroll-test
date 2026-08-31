@@ -448,27 +448,42 @@ async function bulkConfirmPayrolls(){
 function taxEmployeeValue(employee,keys){for(const key of keys){if(employee&&employee[key]!==undefined&&employee[key]!==null&&String(employee[key]).trim()!=="")return employee[key]}return ""}
 function taxText(value){const text=String(value??"");return /^[=+\-@]/.test(text)?"'"+text:text}
 function taxAmount(payroll,key){return Number(payroll&&payroll[key]||0)}
-function taxWorkbookRows(rows,type){
-  const commonHeaders=["점포","구분","성명","주민등록번호","입사일","기본급","연장수당","직무수당","직책수당","추가근무수당","식대","차량유지비","기타지급","지급합계"];
-  const regularHeaders=[...commonHeaders,"국민연금","건강보험","장기요양보험","고용보험","소득세","지방소득세","기타공제","공제합계","실지급액"];
-  const businessHeaders=["점포","구분","성명","주민등록번호","입사일","지급총액","사업소득세(3%)","지방소득세(0.3%)","기타공제","공제합계","실지급액"];
-  const headers=type==="business"?businessHeaders:regularHeaders;
-  const data=rows.map(({p,e})=>{
-    const resident=taxText(taxEmployeeValue(e,["residentNumber","residentRegistrationNumber","rrn","residentNo"]));
-    const hireDate=taxText(taxEmployeeValue(e,["hireDate","joinDate","employmentDate"]));
-    if(type==="business")return [taxText(e.storeName||p.storeName||""),"사업소득",taxText(e.name||p.name||""),resident,hireDate,taxAmount(p,"grossPay"),taxAmount(p,"incomeTax"),taxAmount(p,"localIncomeTax"),taxAmount(p,"otherDeduction"),taxAmount(p,"totalDeduction"),taxAmount(p,"netPay")];
-    return [taxText(e.storeName||p.storeName||""),"근로소득",taxText(e.name||p.name||""),resident,hireDate,taxAmount(p,"basePay"),taxAmount(p,"overtimePay"),taxAmount(p,"jobAllowance"),taxAmount(p,"positionAllowance"),taxAmount(p,"extraWorkPay"),taxAmount(p,"mealAllowance"),taxAmount(p,"vehicleAllowance"),taxAmount(p,"otherPay"),taxAmount(p,"grossPay"),taxAmount(p,"pension"),taxAmount(p,"health"),taxAmount(p,"longTermCare"),taxAmount(p,"employmentInsurance"),taxAmount(p,"incomeTax"),taxAmount(p,"localIncomeTax"),taxAmount(p,"otherDeduction"),taxAmount(p,"totalDeduction"),taxAmount(p,"netPay")];
-  });
-  const total=new Array(headers.length).fill("");total[2]="합계";for(let c=5;c<headers.length;c++)total[c]=data.reduce((sum,row)=>sum+Number(row[c]||0),0);
-  return {headers,data,total};
+function taxLedgerRow({p,e}){
+  const classification=derivePayrollClassification(e,p,p.payType||e.payType);
+  const resident=taxText(taxEmployeeValue(e,["residentNumber","residentRegistrationNumber","rrn","residentNo"]));
+  const hireDate=taxText(taxEmployeeValue(e,["hireDate","joinDate","employmentDate"]));
+  return [
+    taxText(e.storeName||p.storeName||""),
+    classification.incomeType==="근로소득"?"정규":"사업소득",
+    taxText(e.name||p.name||""),resident,hireDate,
+    taxAmount(p,"basePay"),taxAmount(p,"overtimePay"),taxAmount(p,"jobAllowance"),taxAmount(p,"positionAllowance"),
+    taxAmount(p,"extraWorkPay"),0,taxAmount(p,"mealAllowance"),0,taxAmount(p,"vehicleAllowance"),taxAmount(p,"otherPay"),taxAmount(p,"grossPay"),
+    taxAmount(p,"pension"),taxAmount(p,"health"),taxAmount(p,"longTermCare"),taxAmount(p,"employmentInsurance"),
+    taxAmount(p,"incomeTax"),taxAmount(p,"localIncomeTax"),taxAmount(p,"otherDeduction"),taxAmount(p,"totalDeduction"),taxAmount(p,"netPay")
+  ];
 }
-function appendTaxSheet(workbook,name,title,rows,type){
-  const built=taxWorkbookRows(rows,type),aoa=[[title],[],built.headers,...built.data,built.total],ws=XLSX.utils.aoa_to_sheet(aoa);
-  ws["!merges"]=[{s:{r:0,c:0},e:{r:0,c:built.headers.length-1}}];
-  ws["!cols"]=built.headers.map((header,index)=>({wch:index===0?24:index===2?12:index===3?18:index===4?12:header.length+5}));
-  ws["!autofilter"]={ref:XLSX.utils.encode_range({s:{r:2,c:0},e:{r:2+built.data.length,c:built.headers.length-1}})};
-  for(let r=3;r<4+built.data.length;r++)for(let c=5;c<built.headers.length;c++){const cell=ws[XLSX.utils.encode_cell({r,c})];if(cell)cell.z="#,#0"}
-  XLSX.utils.book_append_sheet(workbook,ws,name);
+function buildTaxLedgerSheet(rows,title,payDateText){
+  const group=["소속","구분","성명","주민등록번호","4대보험\n입사일","지급항목","","","","","","","","","","합계","공제항목","","","","","","","합계","실 지급액"];
+  const headers=["소속","구분","성명","주민등록번호","입사일","기본급","연장수당","직무수당","직책수당","추가근무수당","일용직대장","식대","육아수당","차량유지비","기타","지급합계","국민연금","건강보험","장기요양보험","고용보험","소득세","지방소득세","기타공제","공제합계","실 지급액"];
+  const data=rows.map(taxLedgerRow);
+  const total=new Array(headers.length).fill(""); total[2]="합계";
+  for(let c=5;c<headers.length;c++) total[c]=data.reduce((sum,row)=>sum+Number(row[c]||0),0);
+  const aoa=[[title],[`지급일 : ${payDateText||""}`],group,headers,...data,total];
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws["!merges"]=[
+    {s:{r:0,c:0},e:{r:0,c:24}},
+    {s:{r:1,c:0},e:{r:1,c:24}},
+    {s:{r:2,c:5},e:{r:2,c:14}},
+    {s:{r:2,c:16},e:{r:2,c:22}}
+  ];
+  ws["!cols"]=headers.map((h,i)=>({wch:i===0?24:i===2?12:i===3?18:i===4?12:(i>=5?12:10)}));
+  ws["!rows"]=[{hpt:32},{hpt:22},{hpt:24},{hpt:24}];
+  ws["!freeze"]={xSplit:5,ySplit:4};
+  ws["!autofilter"]={ref:XLSX.utils.encode_range({s:{r:3,c:0},e:{r:3+data.length,c:24}})};
+  for(let r=4;r<5+data.length;r++) for(let c=5;c<=24;c++){
+    const cell=ws[XLSX.utils.encode_cell({r,c})]; if(cell) cell.z="#,#0";
+  }
+  return ws;
 }
 function exportConfirmedTaxWorkbook(){
   clear("mainMsg");
@@ -478,39 +493,32 @@ function exportConfirmedTaxWorkbook(){
   const payrollMapForOrder=Object.fromEntries(payrolls.map(p=>[String(p.employeeId),p]));
   const workerTypeOrder={"정직원":1,"아르바이트":2,"사업소득자":3,"일용직":4,"외국인":5};
   const jobTypeOrder={"총괄":1,"홀서빙":2,"홀퇴식":3,"설거지":4,"설것이":4,"주방조리":5};
-  const orderedEmployees=employees
-    .filter(e=>!storeId||String(e.storeId)===String(storeId))
-    .slice()
-    .sort((a,b)=>{
-      const ra=Boolean(a.monthlyRetired)||String(a.name||"").includes("월중 퇴직"),rb=Boolean(b.monthlyRetired)||String(b.name||"").includes("월중 퇴직");
-      if(ra!==rb)return ra?1:-1;
-      const pa=payrollMapForOrder[String(a.employeeId)]||{},pb=payrollMapForOrder[String(b.employeeId)]||{};
-      const wa=normalizeWorkerType(pa.employmentType||a.employmentType||""),wb=normalizeWorkerType(pb.employmentType||b.employmentType||"");
-      const woa=workerTypeOrder[wa]||99,wob=workerTypeOrder[wb]||99;if(woa!==wob)return woa-wob;
-      const ja=pa.jobType||a.position||a.department||"",jb=pb.jobType||b.position||b.department||"";
-      const joa=jobTypeOrder[ja]||99,job=jobTypeOrder[jb]||99;if(joa!==job)return joa-job;
-      const jobNameCompare=String(ja).localeCompare(String(jb),"ko");if(jobNameCompare!==0)return jobNameCompare;
-      return String(a.name||"").localeCompare(String(b.name||""),"ko");
-    });
+  const orderedEmployees=employees.filter(e=>!storeId||String(e.storeId)===String(storeId)).slice().sort((a,b)=>{
+    const ra=Boolean(a.monthlyRetired)||String(a.name||"").includes("월중 퇴직"),rb=Boolean(b.monthlyRetired)||String(b.name||"").includes("월중 퇴직"); if(ra!==rb)return ra?1:-1;
+    const pa=payrollMapForOrder[String(a.employeeId)]||{},pb=payrollMapForOrder[String(b.employeeId)]||{};
+    const wa=normalizeWorkerType(pa.employmentType||a.employmentType||""),wb=normalizeWorkerType(pb.employmentType||b.employmentType||"");
+    const woa=workerTypeOrder[wa]||99,wob=workerTypeOrder[wb]||99;if(woa!==wob)return woa-wob;
+    const ja=pa.jobType||a.position||a.department||"",jb=pb.jobType||b.position||b.department||"";
+    const joa=jobTypeOrder[ja]||99,job=jobTypeOrder[jb]||99;if(joa!==job)return joa-job;
+    const jc=String(ja).localeCompare(String(jb),"ko");if(jc!==0)return jc;
+    return String(a.name||"").localeCompare(String(b.name||""),"ko");
+  });
   const displayOrder=new Map(orderedEmployees.map((e,index)=>[String(e.employeeId),index]));
-  const reviewRows=payrolls
-    .map(p=>({p,e:employees.find(e=>String(e.employeeId)===String(p.employeeId))||{}}))
+  const reviewRows=payrolls.map(p=>({p,e:employees.find(e=>String(e.employeeId)===String(p.employeeId))||{}}))
     .filter(x=>!storeId||String(x.e.storeId)===String(storeId))
     .sort((a,b)=>(displayOrder.get(String(a.p.employeeId))??999999)-(displayOrder.get(String(b.p.employeeId))??999999));
   if(!reviewRows.length)return msg("mainMsg","err","선택한 급여월·점포에 저장된 급여가 없습니다. 급여를 먼저 저장한 뒤 내려받으세요.");
-  const regular=reviewRows.filter(x=>derivePayrollClassification(x.e,x.p,x.p.payType||x.e.payType).incomeType==="근로소득"),
-        business=reviewRows.filter(x=>derivePayrollClassification(x.e,x.p,x.p.payType||x.e.payType).incomeType==="사업소득"),
-        storeName=storeId?($("store").selectedOptions[0]?.textContent||"선택점포"):"전체점포",
-        monthText=month?month.replace("-","년 ")+"월":"선택월",
-        wb=XLSX.utils.book_new();
-  appendTaxSheet(wb,"근로소득자",`${monthText} ${storeName} 근로소득 급여자료`,regular,"regular");
-  appendTaxSheet(wb,"사업소득자",`${monthText} ${storeName} 사업소득 급여자료`,business,"business");
-  const confirmedCount=reviewRows.filter(x=>x.p.status==="확정").length;
-  const draftCount=reviewRows.length-confirmedCount;
-  wb.Props={Title:`${monthText} 급여 세무자료`,Subject:"급여 확정 전 검토용 세무회계 송부자료",Author:"주식회사 더큰코리아",Company:"주식회사 더큰코리아",Comments:`작성중 ${draftCount}명 · 확정 ${confirmedCount}명`};
-  XLSX.writeFile(wb,`${month||"급여월"}_${storeName.replace(/[\\/:*?\"<>|]/g,"")}_세무급여자료_검토용.xlsx`);
+  const storeName=storeId?($("store").selectedOptions[0]?.textContent||"선택점포"):"전체점포";
+  const ym=month?month.split("-"):[];
+  const title=ym.length===2?`${Number(ym[0])}년 ${Number(ym[1])}월 급여 관리대장`:`급여 관리대장`;
+  const wb=XLSX.utils.book_new();
+  const ws=buildTaxLedgerSheet(reviewRows,title,"");
+  XLSX.utils.book_append_sheet(wb,ws,"급여관리대장");
+  const confirmedCount=reviewRows.filter(x=>x.p.status==="확정").length,draftCount=reviewRows.length-confirmedCount;
+  wb.Props={Title:title,Subject:"급여 확정 전 검토용 세무회계 송부자료",Author:"주식회사 더큰코리아",Company:"주식회사 더큰코리아",Comments:`작성중 ${draftCount}명 · 확정 ${confirmedCount}명`};
+  XLSX.writeFile(wb,`${month||"급여월"}_${storeName.replace(/[\\/:*?\"<>|]/g,"")}_급여관리대장_검토용.xlsx`);
   const missing=reviewRows.filter(x=>!taxEmployeeValue(x.e,["residentNumber","residentRegistrationNumber","rrn","residentNo"])).length;
-  msg("mainMsg","ok",`저장된 급여 ${reviewRows.length}명(작성중 ${draftCount}명 · 확정 ${confirmedCount}명)의 검토용 세무자료를 내려받았습니다.${missing?` 주민등록번호 미표시 ${missing}명은 통합 인사정보를 확인하세요.`:""}`)
+  msg("mainMsg","ok",`저장된 급여 ${reviewRows.length}명(작성중 ${draftCount}명 · 확정 ${confirmedCount}명)을 급여관리대장 형식으로 내려받았습니다.${missing?` 주민등록번호 미표시 ${missing}명은 통합 인사정보를 확인하세요.`:""}`);
 }
 function render(){
   const s=$("store").value,k=$("keyword").value.toLowerCase(),map=Object.fromEntries(payrolls.map(p=>[p.employeeId,p])),workerTypeOrder={"정직원":1,"아르바이트":2,"사업소득자":3,"일용직":4,"외국인":5},jobTypeOrder={"총괄":1,"홀서빙":2,"홀퇴식":3,"설거지":4,"설것이":4,"주방조리":5};
