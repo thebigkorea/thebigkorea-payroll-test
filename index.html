@@ -329,7 +329,25 @@ async function login(){
 }
 
 function monthDateRange(month){const match=String(month||"").match(/^(\d{4})-(\d{2})$/);if(!match)return null;const year=Number(match[1]),monthNumber=Number(match[2]),lastDay=new Date(year,monthNumber,0).getDate();return{start:`${match[1]}-${match[2]}-01`,end:`${match[1]}-${match[2]}-${String(lastDay).padStart(2,"0")}`}}
-async function loadDailyWorkerSummary(month){const range=monthDateRange(month);dailyWorkerStoreSummary=[];dailyWorkerSummaryError="";if(!range)return;showActionLoading("일용직 지급완료 금액 집계 중...");try{const url=DAILY_WORKER_API_URL+"?action=getDailyWorkerStoreSummary&startDate="+encodeURIComponent(range.start)+"&endDate="+encodeURIComponent(range.end),response=await fetch(url),json=await response.json();if(!response.ok||!json.success)throw new Error(json.message||"일용직 자료 조회 실패");dailyWorkerStoreSummary=Array.isArray(json.data)?json.data:[]}catch(error){dailyWorkerSummaryError=error.message||"일용직 자료 조회 실패"}finally{hideActionLoading()}}
+const DAILY_WORKER_CACHE_PREFIX="TBK_DAILY_WORKER_SUMMARY_V1";
+function todayLocalKey(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`}
+function dailyWorkerCacheKey(month){return `${DAILY_WORKER_CACHE_PREFIX}|${todayLocalKey()}|${String(month||"")}`}
+function readDailyWorkerCache(month){try{const raw=localStorage.getItem(dailyWorkerCacheKey(month));if(!raw)return null;const parsed=JSON.parse(raw);return Array.isArray(parsed.data)?parsed.data:null}catch(e){return null}}
+function writeDailyWorkerCache(month,data){try{localStorage.setItem(dailyWorkerCacheKey(month),JSON.stringify({savedAt:new Date().toISOString(),data:Array.isArray(data)?data:[]}))}catch(e){}}
+function cleanupOldDailyWorkerCache(){try{const today=`${DAILY_WORKER_CACHE_PREFIX}|${todayLocalKey()}|`;for(let i=localStorage.length-1;i>=0;i--){const key=localStorage.key(i);if(key&&key.startsWith(DAILY_WORKER_CACHE_PREFIX+"|")&&!key.startsWith(today))localStorage.removeItem(key)}}catch(e){}}
+async function loadDailyWorkerSummary(month){
+  const range=monthDateRange(month);dailyWorkerStoreSummary=[];dailyWorkerSummaryError="";if(!range)return;
+  cleanupOldDailyWorkerCache();
+  const cached=readDailyWorkerCache(month);
+  if(cached!==null){dailyWorkerStoreSummary=cached;return;}
+  showActionLoading("일용직 지급완료 금액 집계 중...");
+  try{
+    const url=DAILY_WORKER_API_URL+"?action=getDailyWorkerStoreSummary&startDate="+encodeURIComponent(range.start)+"&endDate="+encodeURIComponent(range.end),response=await fetch(url),json=await response.json();
+    if(!response.ok||!json.success)throw new Error(json.message||"일용직 자료 조회 실패");
+    dailyWorkerStoreSummary=Array.isArray(json.data)?json.data:[];
+    writeDailyWorkerCache(month,dailyWorkerStoreSummary);
+  }catch(error){dailyWorkerSummaryError=error.message||"일용직 자료 조회 실패"}finally{hideActionLoading()}
+}
 function dailyWorkerStoreName(storeName){const name=String(storeName||"");if(name.includes("효종갱"))return "효종갱 파주점";if(name.includes("길채정"))return "길채정 압구정점";if(name.includes("소바공방"))return "소바공방 평촌점";if(name.includes("고궁"))return "고궁 부여점";if(name.includes("한국의집"))return "한국의집";return name}
 function paidDailyWorkerTotal(selectedStoreName){const rows=selectedStoreName?dailyWorkerStoreSummary.filter(row=>String(row.store)===dailyWorkerStoreName(selectedStoreName)):dailyWorkerStoreSummary;return rows.reduce((sum,row)=>sum+Math.max(0,Number(row.totalAmount||0)-Number(row.unpaidAmount||0)),0)}
 async function load(resetToKoreaHouse=false){
@@ -457,9 +475,28 @@ function exportConfirmedTaxWorkbook(){
   if(typeof XLSX==="undefined")return msg("mainMsg","err","엑셀 기능을 불러오지 못했습니다. 인터넷 연결을 확인한 뒤 새로고침하세요.");
   if(dirtyPayrollRows.size)return msg("mainMsg","err",`변경 후 아직 저장하지 않은 급여가 ${dirtyPayrollRows.size}건 있습니다. 먼저 변경분 일괄 저장 후 세무자료를 내려받으세요.`);
   const month=$("month").value,storeId=$("store").value;
+  const payrollMapForOrder=Object.fromEntries(payrolls.map(p=>[String(p.employeeId),p]));
+  const workerTypeOrder={"정직원":1,"아르바이트":2,"사업소득자":3,"일용직":4,"외국인":5};
+  const jobTypeOrder={"총괄":1,"홀서빙":2,"홀퇴식":3,"설거지":4,"설것이":4,"주방조리":5};
+  const orderedEmployees=employees
+    .filter(e=>!storeId||String(e.storeId)===String(storeId))
+    .slice()
+    .sort((a,b)=>{
+      const ra=Boolean(a.monthlyRetired)||String(a.name||"").includes("월중 퇴직"),rb=Boolean(b.monthlyRetired)||String(b.name||"").includes("월중 퇴직");
+      if(ra!==rb)return ra?1:-1;
+      const pa=payrollMapForOrder[String(a.employeeId)]||{},pb=payrollMapForOrder[String(b.employeeId)]||{};
+      const wa=normalizeWorkerType(pa.employmentType||a.employmentType||""),wb=normalizeWorkerType(pb.employmentType||b.employmentType||"");
+      const woa=workerTypeOrder[wa]||99,wob=workerTypeOrder[wb]||99;if(woa!==wob)return woa-wob;
+      const ja=pa.jobType||a.position||a.department||"",jb=pb.jobType||b.position||b.department||"";
+      const joa=jobTypeOrder[ja]||99,job=jobTypeOrder[jb]||99;if(joa!==job)return joa-job;
+      const jobNameCompare=String(ja).localeCompare(String(jb),"ko");if(jobNameCompare!==0)return jobNameCompare;
+      return String(a.name||"").localeCompare(String(b.name||""),"ko");
+    });
+  const displayOrder=new Map(orderedEmployees.map((e,index)=>[String(e.employeeId),index]));
   const reviewRows=payrolls
     .map(p=>({p,e:employees.find(e=>String(e.employeeId)===String(p.employeeId))||{}}))
-    .filter(x=>!storeId||String(x.e.storeId)===String(storeId));
+    .filter(x=>!storeId||String(x.e.storeId)===String(storeId))
+    .sort((a,b)=>(displayOrder.get(String(a.p.employeeId))??999999)-(displayOrder.get(String(b.p.employeeId))??999999));
   if(!reviewRows.length)return msg("mainMsg","err","선택한 급여월·점포에 저장된 급여가 없습니다. 급여를 먼저 저장한 뒤 내려받으세요.");
   const regular=reviewRows.filter(x=>derivePayrollClassification(x.e,x.p,x.p.payType||x.e.payType).incomeType==="근로소득"),
         business=reviewRows.filter(x=>derivePayrollClassification(x.e,x.p,x.p.payType||x.e.payType).incomeType==="사업소득"),
