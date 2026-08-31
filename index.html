@@ -126,8 +126,8 @@
 <div class="section">공제항목</div><label>국민연금<input class="calc deduct" id="pension" type="text" inputmode="numeric"></label><label>건강보험<input class="calc deduct" id="health" type="text" inputmode="numeric"></label><label>장기요양보험<input class="calc deduct" id="longTermCare" type="text" inputmode="numeric"></label><label>고용보험<input class="calc deduct" id="employmentInsurance" type="text" inputmode="numeric"></label><label>소득세<input class="calc deduct" id="incomeTax" type="text" inputmode="numeric"></label><label>지방소득세<input class="calc deduct" id="localIncomeTax" type="text" inputmode="numeric"></label><label>기타공제<input class="calc deduct" id="otherDeduction" type="text" inputmode="numeric"></label>
 <div class="section">보험·세금 자동계산 설정</div>
 <label>공제대상 가족 수<input id="dependents" type="number" min="1" max="11" value="1"></label><label>8세 이상 20세 이하 자녀 수<input id="children" type="number" min="0" max="20" value="0"></label><label>국민연금 월 공제액<input class="money-setting" id="pensionMonthlyAmount" type="text" inputmode="numeric"></label><label>국민연금 적용 시작월<input id="pensionStartMonth" type="month"></label><label>국민연금 적용 종료월<input id="pensionEndMonth" type="month"></label><label>국민연금 산정구분<select id="pensionCalcType"><option>정기결정</option><option>신규취득</option><option>변경신고</option></select></label><label>신규취득 기준소득월액<input class="money-setting" id="pensionBase" type="text" inputmode="numeric"></label><label>건강보험 보수월액<input class="money-setting" id="healthBase" type="text" inputmode="numeric"></label><label>고용보험 보수월액<input class="money-setting" id="employmentBase" type="text" inputmode="numeric"></label>
-<label><span class="checkline"><input id="pensionEnrolled" type="checkbox">국민연금 가입</span></label><label><span class="checkline"><input id="healthEnrolled" type="checkbox">건강보험 가입</span></label><label><span class="checkline"><input id="longTermCareEnrolled" type="checkbox">장기요양보험 가입</span></label><label><span class="checkline"><input id="employmentEnrolled" type="checkbox">고용보험 가입</span></label><label><span class="checkline"><input id="vehicleNonTaxEligible" type="checkbox">차량유지비 비과세 대상</span></label>
-<div class="help">기존 가입자는 공단에서 결정된 국민연금 월 공제액을 입력하고 매년 7월부터 다음 해 6월까지 적용합니다. 신규취득자만 신고 기준소득월액으로 최초 계산합니다. 건강보험·고용보험 보수월액이 0원이면 현재 과세급여로 임시 계산합니다.</div>
+<label><span class="checkline"><input id="pensionEnrolled" type="checkbox">국민연금 가입</span></label><label><span class="checkline"><input id="healthEnrolled" type="checkbox">건강보험 가입</span></label><label><span class="checkline"><input id="longTermCareEnrolled" type="checkbox">장기요양보험 가입</span></label><label><span class="checkline"><input id="employmentEnrolled" type="checkbox">고용보험 가입</span></label><label>고용보험 적용상태<select id="employmentInsuranceStatus"><option value="적용">적용</option><option value="65세이후신규취득">65세 이후 신규취득 · 적용제외</option><option value="기타적용제외">기타 적용제외</option></select></label><label><span class="checkline"><input id="vehicleNonTaxEligible" type="checkbox">차량유지비 비과세 대상</span></label>
+<div class="help">기존 가입자는 공단에서 결정된 국민연금 월 공제액을 입력합니다. <strong>국민연금 적용 종료월을 마지막 공제월로 지정하면 다음 달부터 국민연금이 자동으로 0원 처리됩니다.</strong> 60세 도달 등으로 자격이 상실된 경우에는 ‘국민연금 가입’ 체크를 해제해 현재월부터 즉시 0원 처리할 수도 있습니다. 고용보험은 단순히 65세 이상이라는 이유만으로 자동 제외하지 않고, <strong>65세 이후 신규취득 등 실제 적용제외 대상일 때만 적용상태를 변경하여 0원 처리합니다.</strong> 건강보험·고용보험 보수월액이 0원이면 현재 과세급여로 임시 계산합니다.</div>
 <div class="section">비고</div><label class="full">비고<textarea id="note"></textarea></label>
 <div class="totals"><div class="total">지급합계<strong id="gross">0원</strong></div><div class="total">공제합계<strong id="deduct">0원</strong></div><div class="total">실지급액<strong id="net">0원</strong></div></div></div><div id="modalMsg" class="notice" style="margin:0 18px 12px"></div><div class="actions"><button class="btn gray" onclick="closeModal()">닫기</button><button id="settingBtn" class="btn" onclick="saveInsuranceSetting()">보험·세금 설정 저장</button><button id="autoCalcBtn" class="btn green" onclick="autoCalculateDeductions()">공제 자동계산</button><button id="standardBtn" class="btn" onclick="saveStandard()">급여기준 저장</button><button id="previousBtn" class="btn" onclick="loadPreviousPayroll()">전월 급여 불러오기</button><button class="btn" onclick="previewSlip()">명세서 미리보기</button><button class="btn" onclick="makeKakaoImage()">카톡용 이미지</button><button id="classificationBtn" class="btn blue hidden" onclick="correctPayrollClassification()">근로구분·급여분류·직무 정정</button><button id="saveBtn" class="btn blue" onclick="save()">저장</button><button id="confirmBtn" class="btn green" onclick="confirmPay()">최종 확정</button></div></div></div>
 
@@ -582,32 +582,116 @@ document.querySelectorAll(".money-setting").forEach(function(input){input.addEve
 function decimalValue(id){const value=Number($(id).value||0);return Number.isFinite(value)?Math.max(0,value):0}
 function calculateWorkAllowance(preserveLegacy){const compAmount=Math.round(num("compLeaveDailyRate")*decimalValue("compLeaveDays")),overtimeAmount=Math.round(num("overtimeHourlyRate")*decimalValue("overtimeHours"));$("calculatedCompLeavePay").value=compAmount.toLocaleString("ko-KR");$("calculatedOvertimePay").value=overtimeAmount.toLocaleString("ko-KR");if(!preserveLegacy)$("extraWorkPay").value=(compAmount+overtimeAmount).toLocaleString("ko-KR");$("compLeavePay").value="0";calc()}
 document.querySelectorAll(".work-calc").forEach(function(input){input.addEventListener("input",function(){if(input.classList.contains("money-setting"))formatMoneyInput(input);calculateWorkAllowance(false)});input.addEventListener("focus",function(){input.select()})});
-function data(){const e=employees.find(x=>String(x.employeeId)===String($("employeeId").value))||{},current=payrolls.find(x=>String(x.employeeId)===String($("employeeId").value))||{},classification=derivePayrollClassification(e,current,$("payType").value);return{employmentType:classification.workerType,payType:$("payType").value,incomeType:classification.incomeType,jobType:$("jobType").value,note:$("note").value,compLeavePay:0,compLeaveDailyRate:num("compLeaveDailyRate"),compLeaveDays:decimalValue("compLeaveDays"),calculatedCompLeavePay:num("calculatedCompLeavePay"),overtimeHourlyRate:num("overtimeHourlyRate"),overtimeHours:decimalValue("overtimeHours"),calculatedOvertimePay:num("calculatedOvertimePay"),...Object.fromEntries([...earnIds,...deductIds].map(x=>[x,num(x)]))}}
-function payrollSettingData(){return{incomeType:$("incomeType").value,dependents:Number($("dependents").value||1),children:Number($("children").value||0),pensionEnrolled:$("pensionEnrolled").checked,healthEnrolled:$("healthEnrolled").checked,longTermCareEnrolled:$("longTermCareEnrolled").checked,employmentEnrolled:$("employmentEnrolled").checked,pensionBase:num("pensionBase"),pensionMonthlyAmount:num("pensionMonthlyAmount"),pensionStartMonth:$("pensionStartMonth").value,pensionEndMonth:$("pensionEndMonth").value,pensionCalcType:$("pensionCalcType").value,healthBase:num("healthBase"),employmentBase:num("employmentBase"),vehicleNonTaxEligible:$("vehicleNonTaxEligible").checked}}
-function applyPayrollSetting(s){$("dependents").value=s.dependents||1;$("children").value=s.children||0;["pensionBase","pensionMonthlyAmount","healthBase","employmentBase"].forEach(id=>$(id).value=Number(s[id]||0).toLocaleString("ko-KR"));$("pensionStartMonth").value=s.pensionStartMonth||"";$("pensionEndMonth").value=s.pensionEndMonth||"";$("pensionCalcType").value=s.pensionCalcType||"정기결정";["pensionEnrolled","healthEnrolled","longTermCareEnrolled","employmentEnrolled","vehicleNonTaxEligible"].forEach(id=>$(id).checked=Boolean(s[id]));}
+function data(){const e=employees.find(x=>String(x.employeeId)===String($("employeeId").value))||{},current=payrolls.find(x=>String(x.employeeId)===String($("employeeId").value))||{},classification=derivePayrollClassification(e,current,$("payType").value);return{employmentType:classification.workerType,payType:$("payType").value,incomeType:classification.incomeType,jobType:$("jobType").value,note:$("note").value,pensionStopped:isPensionStoppedForSelectedMonth(),employmentStopped:isEmploymentInsuranceStopped(),compLeavePay:0,compLeaveDailyRate:num("compLeaveDailyRate"),compLeaveDays:decimalValue("compLeaveDays"),calculatedCompLeavePay:num("calculatedCompLeavePay"),overtimeHourlyRate:num("overtimeHourlyRate"),overtimeHours:decimalValue("overtimeHours"),calculatedOvertimePay:num("calculatedOvertimePay"),...Object.fromEntries([...earnIds,...deductIds].map(x=>[x,num(x)]))}}
+function payrollSettingData(){return{incomeType:$("incomeType").value,dependents:Number($("dependents").value||1),children:Number($("children").value||0),pensionEnrolled:$("pensionEnrolled").checked,healthEnrolled:$("healthEnrolled").checked,longTermCareEnrolled:$("longTermCareEnrolled").checked,employmentEnrolled:$("employmentEnrolled").checked,employmentInsuranceStatus:$("employmentInsuranceStatus").value,pensionBase:num("pensionBase"),pensionMonthlyAmount:num("pensionMonthlyAmount"),pensionStartMonth:$("pensionStartMonth").value,pensionEndMonth:$("pensionEndMonth").value,pensionCalcType:$("pensionCalcType").value,healthBase:num("healthBase"),employmentBase:num("employmentBase"),vehicleNonTaxEligible:$("vehicleNonTaxEligible").checked}}
+function applyPayrollSetting(s){$("dependents").value=s.dependents||1;$("children").value=s.children||0;["pensionBase","pensionMonthlyAmount","healthBase","employmentBase"].forEach(id=>$(id).value=Number(s[id]||0).toLocaleString("ko-KR"));$("pensionStartMonth").value=s.pensionStartMonth||"";$("pensionEndMonth").value=s.pensionEndMonth||"";$("pensionCalcType").value=s.pensionCalcType||"정기결정";$("employmentInsuranceStatus").value=s.employmentInsuranceStatus||"적용";["pensionEnrolled","healthEnrolled","longTermCareEnrolled","employmentEnrolled","vehicleNonTaxEligible"].forEach(id=>$(id).checked=Boolean(s[id]));if($("employmentInsuranceStatus").value!=="적용")$("employmentEnrolled").checked=false;}
+function pensionEndedByMonth(){
+  const selectedMonth=String($("month")?.value||"");
+  const endMonth=String($("pensionEndMonth")?.value||"");
+  return Boolean(selectedMonth&&endMonth&&selectedMonth>endMonth);
+}
+function isPensionStoppedForSelectedMonth(){
+  return !$("pensionEnrolled").checked || pensionEndedByMonth();
+}
+function applyPensionStopPolicy(showMessage=false){
+  if(currentPayrollLocked)return;
+  const stopped=isPensionStoppedForSelectedMonth();
+  if(stopped){
+    $("pension").value="0";
+    if(pensionEndedByMonth()) $("pensionEnrolled").checked=false;
+    if(showMessage){
+      const endMonth=String($("pensionEndMonth").value||"");
+      msg("modalMsg","ok",endMonth?`국민연금 적용 종료월(${endMonth}) 이후 급여이므로 국민연금을 0원 처리합니다.`:"국민연금 적용제외로 설정하여 국민연금을 0원 처리합니다.");
+    }
+  }
+  calc();
+}
+function isEmploymentInsuranceStopped(){
+  const status=String($("employmentInsuranceStatus")?.value||"적용");
+  return !$("employmentEnrolled").checked || status!=="적용";
+}
+function applyEmploymentInsurancePolicy(showMessage=false){
+  if(currentPayrollLocked)return;
+  const status=String($("employmentInsuranceStatus")?.value||"적용");
+  if(status!=="적용"){
+    $("employmentEnrolled").checked=false;
+    $("employmentInsurance").value="0";
+    if(showMessage){
+      msg("modalMsg","ok",status==="65세이후신규취득"?"65세 이후 신규취득 · 적용제외로 설정하여 고용보험을 0원 처리합니다.":"고용보험 적용제외로 설정하여 고용보험을 0원 처리합니다.");
+    }
+  }else if(!$("employmentEnrolled").checked){
+    $("employmentInsurance").value="0";
+    if(showMessage)msg("modalMsg","ok","고용보험 가입을 해제하여 고용보험을 0원 처리합니다.");
+  }
+  calc();
+}
 function updateInsuranceSelectionPolicy(resetBusiness){
   if(currentPayrollLocked)return;
   const monthlyEmployee=$("payType").value==="월급제"&&$("incomeType").value==="근로소득";
   const business=$("incomeType").value==="사업소득";
   const insuranceIds=["pensionEnrolled","healthEnrolled","longTermCareEnrolled","employmentEnrolled"];
   ["pension","health","longTermCare","employmentInsurance","incomeTax","localIncomeTax"].forEach(id=>$(id).readOnly=business);
-  insuranceIds.forEach(id=>$(id).disabled=monthlyEmployee);
+
+  // 월급제 근로소득도 국민연금은 60세 도달·자격상실 등의 예외가 있으므로 개별 해제가 가능해야 합니다.
+  $("pensionEnrolled").disabled=business;
+  ["healthEnrolled","longTermCareEnrolled"].forEach(id=>$(id).disabled=monthlyEmployee||business);
+  $("employmentEnrolled").disabled=business;
+  $("employmentInsuranceStatus").disabled=business;
+
   if(monthlyEmployee){
-    insuranceIds.forEach(id=>$(id).checked=true);
-    msg("modalMsg","ok","월급제 근로소득은 4대보험이 자동 적용됩니다.");
+    ["healthEnrolled","longTermCareEnrolled"].forEach(id=>$(id).checked=true);
+    if($("employmentInsuranceStatus").value==="적용")$("employmentEnrolled").checked=true;
+    if(pensionEndedByMonth()){
+      $("pensionEnrolled").checked=false;
+      $("pension").value="0";
+      const endMonth=String($("pensionEndMonth").value||"");
+      msg("modalMsg","ok",`국민연금 적용 종료월(${endMonth}) 이후 급여이므로 국민연금은 0원 처리됩니다.`);
+    }else{
+      msg("modalMsg","ok","월급제 근로소득은 건강보험·장기요양보험이 자동 적용됩니다. 국민연금과 고용보험은 자격상실·적용제외 시 개별 해제할 수 있습니다.");
+    }
   }else if(business&&resetBusiness){
     insuranceIds.forEach(id=>$(id).checked=false);
     ["pension","health","longTermCare","employmentInsurance"].forEach(id=>$(id).value="0");
     msg("modalMsg","ok","사업소득으로 변경하여 4대보험을 자동 해제하고 보험료를 0원으로 초기화했습니다. 필요한 보험은 다시 선택할 수 있습니다.");
   }
+  applyPensionStopPolicy(false);
+  applyEmploymentInsurancePolicy(false);
   calc();
 }
+$("pensionEnrolled").addEventListener("change",()=>{
+  if(!$("pensionEnrolled").checked){
+    $("pension").value="0";
+    applyPensionStopPolicy(true);
+  }else{
+    msg("modalMsg","ok","국민연금 가입을 다시 적용했습니다. 공제 자동계산을 눌러 금액을 계산하세요.");
+    calc();
+  }
+});
+$("pensionEndMonth").addEventListener("change",()=>{
+  updateInsuranceSelectionPolicy(false);
+  applyPensionStopPolicy(true);
+});
+$("employmentEnrolled").addEventListener("change",()=>{
+  if(!$("employmentEnrolled").checked){
+    $("employmentInsurance").value="0";
+    applyEmploymentInsurancePolicy(true);
+  }else{
+    $("employmentInsuranceStatus").value="적용";
+    msg("modalMsg","ok","고용보험 가입을 다시 적용했습니다. 공제 자동계산을 눌러 금액을 계산하세요.");
+    calc();
+  }
+});
+$("employmentInsuranceStatus").addEventListener("change",()=>{
+  if($("employmentInsuranceStatus").value!=="적용")$("employmentEnrolled").checked=false;
+  else $("employmentEnrolled").checked=true;
+  applyEmploymentInsurancePolicy(true);
+});
 function applyCompanyClassificationToModal(){const e=employees.find(x=>String(x.employeeId)===String($("employeeId").value))||{},p=payrolls.find(x=>String(x.employeeId)===String($("employeeId").value))||{},classification=derivePayrollClassification(e,p,$("payType").value);$("workerType").value=classification.workerType;$("incomeType").value=classification.incomeType;$("incomeType").disabled=true;updateInsuranceSelectionPolicy(true);calc()}
 $("payType").addEventListener("change",applyCompanyClassificationToModal);
 $("incomeType").addEventListener("change",()=>updateInsuranceSelectionPolicy(true));
 $("payType").addEventListener("change",()=>updateInsuranceSelectionPolicy(false));
 async function saveInsuranceSetting(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");const b=$("settingBtn");setButtonBusy(b,true,"저장 중...");try{const r=await post({action:"savePayrollSetting",employeeId:$("employeeId").value,setting:payrollSettingData(),updatedBy:$("updatedBy").value});payrollSetting=r.setting;msg("modalMsg","ok",r.message)}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
-async function autoCalculateDeductions(){const b=$("autoCalcBtn");setButtonBusy(b,true,"계산 중...");try{const r=await post({action:"calculatePayrollDeductions",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),setting:payrollSettingData()});const c=r.calculation||{};["pension","health","longTermCare","employmentInsurance","incomeTax","localIncomeTax"].forEach(id=>$(id).value=Number(c[id]||0).toLocaleString("ko-KR"));calc();const detail="과세급여 "+won(c.taxablePay)+" · 비과세급여 "+won(c.nonTaxPay);const warning=(c.warnings||[]).length?" / "+c.warnings.join(" "):"";msg("modalMsg","ok","공제를 자동 계산했습니다. "+detail+warning)}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
+async function autoCalculateDeductions(){const b=$("autoCalcBtn");setButtonBusy(b,true,"계산 중...");try{const r=await post({action:"calculatePayrollDeductions",month:$("month").value,employeeId:$("employeeId").value,payroll:data(),setting:payrollSettingData()});const c=r.calculation||{};["pension","health","longTermCare","employmentInsurance","incomeTax","localIncomeTax"].forEach(id=>$(id).value=Number(c[id]||0).toLocaleString("ko-KR"));if(isPensionStoppedForSelectedMonth())$("pension").value="0";if(isEmploymentInsuranceStopped())$("employmentInsurance").value="0";calc();const detail="과세급여 "+won(c.taxablePay)+" · 비과세급여 "+won(c.nonTaxPay);const pensionNote=isPensionStoppedForSelectedMonth()?" · 국민연금 적용제외 0원":"";const employmentNote=isEmploymentInsuranceStopped()?" · 고용보험 적용제외 0원":"";const warning=(c.warnings||[]).length?" / "+c.warnings.join(" "):"";msg("modalMsg","ok","공제를 자동 계산했습니다. "+detail+pensionNote+employmentNote+warning)}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
 function standardData(){return{payType:$("payType").value,incomeType:$("incomeType").value,jobType:$("jobType").value,basePay:num("basePay"),overtimePay:num("overtimePay"),jobAllowance:num("jobAllowance"),positionAllowance:num("positionAllowance"),mealAllowance:num("mealAllowance"),vehicleAllowance:num("vehicleAllowance"),otherPay:num("otherPay"),compLeaveDailyRate:num("compLeaveDailyRate"),overtimeHourlyRate:num("overtimeHourlyRate")}}
 async function saveStandard(){if(!$("updatedBy").value.trim())return msg("modalMsg","err","처리자 이름을 입력하세요.");const b=$("standardBtn");setButtonBusy(b,true,"저장 중...");try{const r=await post({action:"savePayStandard",employeeId:$("employeeId").value,standard:standardData(),updatedBy:$("updatedBy").value});const index=payStandards.findIndex(x=>x.employeeId===r.standard.employeeId);if(index>=0)payStandards[index]=r.standard;else payStandards.push(r.standard);msg("modalMsg","ok",r.message+" 추가근무수당·미휴무수당과 공제항목은 월별 변동항목이므로 기준에 저장하지 않습니다.")}catch(e){msg("modalMsg","err",e.message)}finally{setButtonBusy(b,false)}}
 function loadPreviousPayroll(){const employeeId=$("employeeId").value,previous=previousPayrolls.find(x=>x.employeeId===employeeId);if(!previous)return msg("modalMsg","err",(previousMonth||"전월")+"에 저장된 급여자료가 없습니다.");[...earnIds,...deductIds].forEach(id=>$(id).value=Number(previous[id]||0).toLocaleString("ko-KR"));$("compLeaveDailyRate").value=Number(previous.compLeaveDailyRate||0).toLocaleString("ko-KR");$("overtimeHourlyRate").value=Number(previous.overtimeHourlyRate||0).toLocaleString("ko-KR");$("compLeaveDays").value=Number(previous.compLeaveDays||0);$("overtimeHours").value=Number(previous.overtimeHours||0);calculateWorkAllowance(Boolean(previous.extraWorkPay&&!previous.compLeaveDailyRate&&!previous.overtimeHourlyRate));$("payType").value=previous.payType||"월급제";$("incomeType").value=previous.incomeType||"근로소득";$("jobType").value=previous.jobType||"";const e=employees.find(x=>x.employeeId===$("employeeId").value);const current=payrolls.find(x=>x.employeeId===$("employeeId").value);if(e)applyKoreaHouseLinkedBasePay(e,current,false);calc();msg("modalMsg","ok",(previousMonth||"전월")+" 급여를 불러왔습니다. 한국의집 연동 대상자는 기본급을 선택월 근로내역 금액으로 다시 적용했습니다.")}
