@@ -309,7 +309,7 @@
     <small>세전 지급액 · 지급완료 기준</small>
   </div>
 </div>
-<section class="card"><div class="toolbar"><label>급여월<input id="month" type="month"></label><label>점포<select id="store" onchange="render()"><option value="">전체 점포</option></select></label><label>직원 검색<input id="keyword" type="search" oninput="render()" placeholder="이름·직무"></label><button class="btn" onclick="load()">조회</button><button id="partTimeSyncBtn" class="btn teal" title="한국의집 아르바이트 관리의 선택월 근무·급여자료를 다시 읽어옵니다." onclick="refreshPartTimeData()">아르바이트 자료 연동</button><button class="btn green" onclick="openMissingEmployeeRegistration()">누락 직원 등록</button><button class="btn blue" onclick="openBusinessHistory()">과거 사업소득 일괄입력</button><button class="btn gray" onclick="exportConfirmedTaxWorkbook()">세무자료 엑셀 다운로드</button></div><div id="mainMsg" class="notice"></div></section>
+<section class="card"><div class="toolbar"><label>급여월<input id="month" type="month"></label><label>점포<select id="store" onchange="render()"><option value="">전체 점포</option></select></label><label>직원 검색<input id="keyword" type="search" oninput="render()" placeholder="이름·직무"></label><button class="btn" onclick="load()">조회</button><button id="partTimeSyncBtn" class="btn teal" title="한국의집 아르바이트 관리의 선택월 실제 급여를 더큰코리아 급여원장에 반영합니다." onclick="refreshPartTimeData()">아르바이트 자료 연동</button><button class="btn green" onclick="openMissingEmployeeRegistration()">누락 직원 등록</button><button class="btn blue" onclick="openBusinessHistory()">과거 사업소득 일괄입력</button><button class="btn gray" onclick="exportConfirmedTaxWorkbook()">세무자료 엑셀 다운로드</button></div><div id="mainMsg" class="notice"></div></section>
 <section class="card"><div class="payroll-sheet-toolbar"><p>직원 이름을 누르면 상세 조회·수정이 열립니다. 변경분을 저장한 뒤 세무자료를 내려받아 검토하고, 이상이 없으면 <strong>일괄 최종확정</strong>하세요.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="bulkSaveBtn" class="btn blue" onclick="saveDirtyPayrollRows()">변경분 일괄 저장</button><button id="bulkConfirmBtn" class="btn green" onclick="bulkConfirmPayrolls()">일괄 최종확정</button></div></div><div class="payroll-sheet"><table><thead><tr><th class="sheet-store">점포</th><th class="sheet-name">직원</th><th>근로구분</th><th>직무</th><th>급여형태</th><th>소득구분</th><th class="sheet-group-earn">기본급</th><th class="sheet-group-earn">연장수당</th><th class="sheet-group-earn">직무수당</th><th class="sheet-group-earn">직책수당</th><th class="sheet-group-earn">추가근무수당</th><th class="sheet-group-earn">식대</th><th class="sheet-group-earn">차량유지비</th><th class="sheet-group-earn">기타지급</th><th class="sheet-group-total">지급합계</th><th class="sheet-group-deduct">국민연금</th><th class="sheet-group-deduct">건강보험</th><th class="sheet-group-deduct">장기요양</th><th class="sheet-group-deduct">고용보험</th><th class="sheet-group-deduct">소득세</th><th class="sheet-group-deduct">지방소득세</th><th class="sheet-group-deduct">기타공제</th><th class="sheet-group-total">공제합계</th><th class="sheet-group-total">실지급액</th><th>상태</th><th class="sheet-actions">관리 <span class="version-tag">고정</span></th></tr></thead><tbody id="body"><tr><td colspan="26">급여월을 선택하고 조회하세요.</td></tr></tbody></table></div></section>
 </section></main>
 
@@ -632,30 +632,39 @@ async function refreshPartTimeData(){
 
   try{
     /*
-     * getPayrollData는 서버에서 한국의집 아르바이트 관리 DB를
-     * 선택월 기준으로 다시 읽어 koreaHouseLinkedPayroll을 반환합니다.
-     * 따라서 별도의 중복 저장 없이 최신 연동자료를 다시 조회합니다.
+     * 1. 한국의집 아르바이트 관리 선택월 급여를
+     *    더큰코리아 월급여원장에 실제 저장합니다.
+     * 2. 저장 완료 후 화면을 다시 조회합니다.
+     * 3. 연동 검증표를 열어 누락 여부를 확인합니다.
      */
+    const r=await post({
+      action:"syncKoreaHousePayroll",
+      month:$("month").value,
+      updatedBy:"급여담당자"
+    });
+
     await load(false);
 
     const linkedCount=Object.keys(koreaHouseLinkedPayroll||{}).length;
+
     msg(
       "mainMsg",
-      "ok",
-      linkedCount
-        ? `아르바이트 자료를 다시 연동했습니다. 현재 ${linkedCount}명의 선택월 연동 급여를 확인했습니다.`
-        : "아르바이트 자료를 다시 확인했습니다. 현재 선택월에 연동할 급여자료가 없습니다."
+      r.failed ? "err" : "ok",
+      r.message ||
+      `아르바이트 자료를 연동했습니다. ${linkedCount}명의 선택월 급여를 확인했습니다.`
     );
 
     openKoreaHouseLinkDiagnostics();
   }catch(e){
-    msg("mainMsg","err","아르바이트 자료 연동 오류: "+(e.message||String(e)));
+    msg(
+      "mainMsg",
+      "err",
+      "아르바이트 자료 연동 오류: "+(e.message||String(e))
+    );
   }finally{
     if(button)setButtonBusy(button,false);
   }
 }
-
-
 
 function esc(value){
   return String(value==null ? "" : value)
