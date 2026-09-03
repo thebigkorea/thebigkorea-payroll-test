@@ -266,6 +266,38 @@
   .link-diagnostic-types{grid-template-columns:1fr}
 }
 
+
+/* ===== 급여표 상단 좌우 스크롤바 ===== */
+.payroll-top-scroll{
+  width:100%;
+  height:18px;
+  margin:0 0 7px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  border:1px solid #d8cabe;
+  border-radius:8px;
+  background:#f5f1eb;
+}
+.payroll-top-scroll-inner{
+  height:1px;
+}
+.payroll-top-scroll::-webkit-scrollbar,
+.payroll-sheet::-webkit-scrollbar{
+  height:14px;
+  width:10px;
+}
+.payroll-top-scroll::-webkit-scrollbar-thumb,
+.payroll-sheet::-webkit-scrollbar-thumb{
+  background:#aa9b8e;
+  border:3px solid #f5f1eb;
+  border-radius:999px;
+}
+.payroll-top-scroll::-webkit-scrollbar-track,
+.payroll-sheet::-webkit-scrollbar-track{
+  background:#eee7df;
+  border-radius:999px;
+}
+
 </style></head><body><div id="actionLoadingOverlay" class="action-loading-overlay"><div class="action-loading-box"><span class="action-spinner"></span><span id="actionLoadingText">처리 중...</span></div></div>
 <header class="head"><div><h1>더큰코리아 급여관리 시스템</h1><p>직원 급여 작성·확정, 급여명세서, 인사상태 및 퇴직급여를 통합 관리합니다.</p></div></header>
 <main class="wrap">
@@ -324,7 +356,7 @@
   </div>
 </div>
 <section class="card"><div class="toolbar"><label>급여월<input id="month" type="month"></label><label>점포<select id="store" onchange="render()"><option value="">전체 점포</option></select></label><label>직원 검색<input id="keyword" type="search" oninput="render()" placeholder="이름·직무"></label><button class="btn" onclick="load()">조회</button><button id="regularPreviousBtn" class="btn blue" title="현재 조회 목록의 정규직·근로소득·월급제 직원에게 전월 급여 지급항목을 불러옵니다." onclick="loadRegularPreviousPayrolls()">정규직 전월 급여 불러오기</button><button id="partTimeSyncBtn" class="btn teal" title="한국의집 아르바이트 관리의 선택월 실제 급여를 더큰코리아 급여원장에 반영합니다." onclick="refreshPartTimeData()">아르바이트 자료 연동</button><button class="btn green" onclick="openMissingEmployeeRegistration()">누락 직원 등록</button><button class="btn blue" onclick="openBusinessHistory()">과거 사업소득 일괄입력</button><button class="btn gray" onclick="exportConfirmedTaxWorkbook()">세무자료 엑셀 다운로드</button></div><div id="mainMsg" class="notice"></div></section>
-<section class="card"><div class="payroll-sheet-toolbar"><p>직원 이름을 누르면 상세 조회·수정이 열립니다. 메인 화면은 급여금액 중심으로 간단하게 표시하며, <strong>일괄 최종확정</strong> 후에는 각 직원 오른쪽의 <strong>급여명세서 보내기</strong> 버튼을 사용할 수 있습니다.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="bulkSaveBtn" class="btn blue" onclick="saveDirtyPayrollRows()">변경분 일괄 저장</button><button id="bulkConfirmBtn" class="btn green" onclick="bulkConfirmPayrolls()">일괄 최종확정</button></div></div><div class="payroll-sheet"><table><thead><tr><th class="sheet-name">직원</th><th class="sheet-group-earn">기본급</th><th class="sheet-group-earn">연장수당</th><th class="sheet-group-earn">직무수당</th><th class="sheet-group-earn">직책수당</th><th class="sheet-group-earn">추가근무수당</th><th class="sheet-group-earn">식대</th><th class="sheet-group-earn">차량유지비</th><th class="sheet-group-earn">기타지급</th><th class="sheet-group-total">지급합계</th><th class="sheet-group-deduct">국민연금</th><th class="sheet-group-deduct">건강보험</th><th class="sheet-group-deduct">장기요양</th><th class="sheet-group-deduct">고용보험</th><th class="sheet-group-deduct">소득세</th><th class="sheet-group-deduct">지방소득세</th><th class="sheet-group-deduct">기타공제</th><th class="sheet-group-total">공제합계</th><th class="sheet-group-total">실지급액</th><th>상태</th><th class="sheet-actions">관리</th></tr></thead><tbody id="body"><tr><td colspan="21">급여월을 선택하고 조회하세요.</td></tr></tbody></table></div></section>
+<section class="card"><div class="payroll-sheet-toolbar"><p>직원 이름을 누르면 상세 조회·수정이 열립니다. 메인 화면은 급여금액 중심으로 간단하게 표시하며, <strong>일괄 최종확정</strong> 후에는 각 직원 오른쪽의 <strong>급여명세서 보내기</strong> 버튼을 사용할 수 있습니다.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button id="bulkSaveBtn" class="btn blue" onclick="saveDirtyPayrollRows()">변경분 일괄 저장</button><button id="bulkConfirmBtn" class="btn green" onclick="bulkConfirmPayrolls()">일괄 최종확정</button></div></div><div id="payrollTopScroll" class="payroll-top-scroll" aria-label="급여표 좌우 스크롤"><div id="payrollTopScrollInner" class="payroll-top-scroll-inner"></div></div><div class="payroll-sheet"><table><thead><tr><th class="sheet-name">직원</th><th class="sheet-group-earn">기본급</th><th class="sheet-group-earn">연장수당</th><th class="sheet-group-earn">직무수당</th><th class="sheet-group-earn">직책수당</th><th class="sheet-group-earn">추가근무수당</th><th class="sheet-group-earn">식대</th><th class="sheet-group-earn">차량유지비</th><th class="sheet-group-earn">기타지급</th><th class="sheet-group-total">지급합계</th><th class="sheet-group-deduct">국민연금</th><th class="sheet-group-deduct">건강보험</th><th class="sheet-group-deduct">장기요양</th><th class="sheet-group-deduct">고용보험</th><th class="sheet-group-deduct">소득세</th><th class="sheet-group-deduct">지방소득세</th><th class="sheet-group-deduct">기타공제</th><th class="sheet-group-total">공제합계</th><th class="sheet-group-total">실지급액</th><th>상태</th><th class="sheet-actions">관리</th></tr></thead><tbody id="body"><tr><td colspan="21">급여월을 선택하고 조회하세요.</td></tr></tbody></table></div></section>
 </section></main>
 
 <div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="box"><div class="mhead"><h2>직원 급여 계산</h2><button class="close" onclick="closeModal()">×</button></div><div class="summary"><strong id="empName"></strong><div id="empInfo"></div></div>
@@ -1644,4 +1676,64 @@ function setButtonBusy(button,busy,busyText){
   }
 }
 
-</script></body></html>
+</script>
+<script>
+(function(){
+  let syncingPayrollScroll = false;
+
+  function setupPayrollHorizontalScroll(){
+    const topScroll = document.getElementById("payrollTopScroll");
+    const topInner = document.getElementById("payrollTopScrollInner");
+    const sheet = document.querySelector(".payroll-sheet");
+    const table = sheet ? sheet.querySelector("table") : null;
+
+    if(!topScroll || !topInner || !sheet || !table) return;
+
+    function resizeTopScrollbar(){
+      topInner.style.width = Math.max(table.scrollWidth, sheet.clientWidth) + "px";
+      topScroll.scrollLeft = sheet.scrollLeft;
+    }
+
+    topScroll.addEventListener("scroll", function(){
+      if(syncingPayrollScroll) return;
+      syncingPayrollScroll = true;
+      sheet.scrollLeft = topScroll.scrollLeft;
+      requestAnimationFrame(function(){ syncingPayrollScroll = false; });
+    });
+
+    sheet.addEventListener("scroll", function(){
+      if(syncingPayrollScroll) return;
+      syncingPayrollScroll = true;
+      topScroll.scrollLeft = sheet.scrollLeft;
+      requestAnimationFrame(function(){ syncingPayrollScroll = false; });
+    });
+
+    resizeTopScrollbar();
+    window.addEventListener("resize", resizeTopScrollbar);
+
+    if(window.ResizeObserver){
+      const observer = new ResizeObserver(resizeTopScrollbar);
+      observer.observe(sheet);
+      observer.observe(table);
+    }
+
+    const tbody = table.querySelector("tbody");
+    if(tbody && window.MutationObserver){
+      const observer = new MutationObserver(function(){
+        requestAnimationFrame(resizeTopScrollbar);
+      });
+      observer.observe(tbody,{childList:true,subtree:true,attributes:true});
+    }
+
+    window.refreshPayrollTopScrollbar = resizeTopScrollbar;
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", setupPayrollHorizontalScroll);
+  }else{
+    setupPayrollHorizontalScroll();
+  }
+})();
+</script>
+
+</body></html>
